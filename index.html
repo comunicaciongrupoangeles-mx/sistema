@@ -41,7 +41,7 @@
             margin-bottom: 25px;
             animation: fadeInUp 0.5s ease;
         }
-        .card h2 { margin-bottom: 20px; color: #333; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .card h2 { margin-bottom: 20px; color: #333; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; border-left: 4px solid #1e3c72; padding-left: 15px; }
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -81,17 +81,9 @@
             border-top: 1px solid rgba(255,255,255,0.3);
             padding-top: 10px;
         }
-        .today-posts-list::-webkit-scrollbar {
-            width: 5px;
-        }
-        .today-posts-list::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.2);
-            border-radius: 5px;
-        }
-        .today-posts-list::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.5);
-            border-radius: 5px;
-        }
+        .today-posts-list::-webkit-scrollbar { width: 5px; }
+        .today-posts-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.2); border-radius: 5px; }
+        .today-posts-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); border-radius: 5px; }
         .today-post-item {
             padding: 5px 0;
             border-bottom: 1px solid rgba(255,255,255,0.2);
@@ -100,9 +92,7 @@
             justify-content: space-between;
             gap: 10px;
         }
-        .today-post-item:last-child {
-            border-bottom: none;
-        }
+        .today-post-item:last-child { border-bottom: none; }
         .today-post-title {
             font-weight: 500;
             white-space: nowrap;
@@ -323,21 +313,15 @@
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Estilos para los botones */
+        /* Botones de acción */
         .input-with-copy {
             display: flex;
             gap: 10px;
             align-items: flex-start;
         }
-        .input-with-copy input, 
-        .input-with-copy textarea {
-            flex: 1;
-        }
-        .input-with-copy textarea {
-            resize: vertical;
-        }
+        .input-with-copy input, .input-with-copy textarea { flex: 1; }
+        .input-with-copy textarea { resize: vertical; }
         
-        /* Botón para copiar texto */
         .btn-copy-icon {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -355,7 +339,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        /* Botón para abrir link */
         .btn-open-link {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
@@ -378,10 +361,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         
-        .btn-copy-icon:active, .btn-open-link:active {
-            transform: translateY(0);
-        }
-        
         .btn-copy-icon.copied {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             animation: pulse 0.5s ease;
@@ -393,19 +372,13 @@
             transform: none;
         }
         
-        .btn-open-link.disabled:hover {
-            transform: none;
-        }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
         
-        .btn-copy-icon, .btn-open-link {
-            position: relative;
-        }
+        .btn-copy-icon, .btn-open-link { position: relative; }
         
         .btn-copy-icon::before, .btn-open-link::before {
             content: attr(data-tooltip);
@@ -423,13 +396,10 @@
             opacity: 0;
             transition: opacity 0.3s;
             margin-bottom: 5px;
-            font-family: 'Segoe UI', sans-serif;
             z-index: 1000;
         }
         
-        .btn-copy-icon:hover::before, .btn-open-link:hover::before {
-            opacity: 1;
-        }
+        .btn-copy-icon:hover::before, .btn-open-link:hover::before { opacity: 1; }
         
         .copy-feedback-toast {
             position: fixed;
@@ -449,14 +419,8 @@
         }
         
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         
         @media (max-width: 768px) {
@@ -465,15 +429,9 @@
             .charts-grid { grid-template-columns: 1fr; }
             .dashboard-grid { grid-template-columns: 1fr; }
             .fab { width: 50px; height: 50px; font-size: 24px; }
-            .input-with-copy { 
-                flex-direction: column;
-            }
-            .btn-copy-icon, .btn-open-link {
-                width: 100%;
-            }
-            .today-posts-card {
-                grid-column: span 1;
-            }
+            .input-with-copy { flex-direction: column; }
+            .btn-copy-icon, .btn-open-link { width: 100%; }
+            .today-posts-card { grid-column: span 1; }
         }
     </style>
 </head>
@@ -487,7 +445,6 @@
                         <div class="nombre">LOS ÁNGELES</div>
                     </div>
                 </div>
-                <div style="flex: 1;"></div>
             </div>
             <div class="title-container">
                 <h1>📊 GELA - Gestor de Contenido</h1>
@@ -506,9 +463,7 @@
                 <div class="today-posts-card">
                     <div class="value" id="publicacionesHoy">0</div>
                     <div class="label">📅 Publicaciones del día de hoy</div>
-                    <div class="today-posts-list" id="todayPostsList">
-                        <div style="text-align: center; opacity: 0.8;">Cargando...</div>
-                    </div>
+                    <div class="today-posts-list" id="todayPostsList"><div style="text-align: center; opacity: 0.8;">Cargando...</div></div>
                 </div>
             </div>
             <div class="charts-grid">
@@ -519,13 +474,10 @@
             </div>
             <h3 style="margin-top:15px;">📋 Ranking de Responsables</h3>
             <div class="ranking-table">
-                <table>
-                    <thead>
-                        <tr><th>Responsable</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th></tr>
-                    </thead>
-                    <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
-                </tbody>
-            </table>
+                <table style="width:100%">
+                    <thead><tr><th>Responsable</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
+                    <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr></tbody>
+                </table>
             </div>
         </div>
 
@@ -552,12 +504,10 @@
                     </select>
                 </div>
                 <div class="filter-group"><label>👤 Responsable</label>
-                    <select id="filterResponsable">
-                        <option value="">Todos</option>
-                    </select>
+                    <select id="filterResponsable"><option value="">Todos</option></select>
                 </div>
                 <div class="filter-group"><label>⭐ Prioridad</label><select id="filterPrioridad"><option value="">Todas</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option><option value="Programar">Programar</option></select></div>
-                <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option><option value="PROGRAMAR">PROGRAMAR</option></select></div>
+                <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option></select></div>
                 <div class="filter-group"><label>📢 Publicado</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí</option><option value="No">No</option></select></div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -585,8 +535,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr>
-                    </tbody>
+                    <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -636,14 +585,11 @@
                         <div class="form-group"><label>📢 ¿Publicado?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div>
                         <div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option></select></div>
                         
-                        <!-- Campo LINK con botón para ABRIR en nueva pestaña -->
                         <div class="form-group full-width">
                             <label>🔗 Link</label>
                             <div class="input-with-copy">
                                 <input type="url" id="link" placeholder="https://">
-                                <button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">
-                                    🔗
-                                </button>
+                                <button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button>
                             </div>
                         </div>
                         
@@ -663,22 +609,26 @@
                             </select>
                         </div>
                         <div class="form-group"><label class="required">👤 Responsable</label>
-                            <select id="responsable" required>
-                                <option value="">Seleccionar responsable...</option>
+                            <select id="responsable" required><option value="">Seleccionar responsable...</option></select>
+                        </div>
+                        <div class="form-group"><label class="required">✍️ Elaborado por</label>
+                            <select id="elaborado_por" required>
+                                <option value="">Seleccionar</option>
+                                <option value="Andrés">Andrés</option>
+                                <option value="Humberto">Humberto</option>
+                                <option value="Josymar">Josymar</option>
+                                <option value="Sarain">Sarain</option>
+                                <option value="Víctor">Víctor</option>
                             </select>
                         </div>
-                        <div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div>
                         <div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div>
                         
-                        <!-- Campo COPY COMPLETO con botón de copiar -->
                         <div class="full-width">
                             <div class="form-group">
                                 <label class="required">📄 Copy completo</label>
                                 <div class="input-with-copy">
                                     <textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea>
-                                    <button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">
-                                        📋
-                                    </button>
+                                    <button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button>
                                 </div>
                             </div>
                         </div>
@@ -699,7 +649,7 @@
                 <p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p>
                 <div class="form-group" style="margin-top: 15px;">
                     <label>✅ Selecciona nuevo estado:</label>
-                    <select id="nuevoEstado" class="form-control" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
+                    <select id="nuevoEstado" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
                         <option value="LISTO">✅ LISTO - Aprobado</option>
                         <option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option>
                         <option value="EN REVISIÓN">🔍 EN REVISIÓN</option>
@@ -708,7 +658,7 @@
                 </div>
                 <div class="form-group" style="margin-top: 15px;">
                     <label>📢 ¿Publicado?</label>
-                    <select id="nuevoPublicado" class="form-control" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
+                    <select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
                         <option value="No">❌ No</option>
                         <option value="Sí">✅ Sí</option>
                     </select>
@@ -719,85 +669,18 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURACIÓN - ACTUALIZAR CON TU URL
+        // ============================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5T3Td4BzVnJOGDsTmS8xCBub_II325pnydOBrVEY4Jf18FjwsfIVfgIA83TFh4ZZf/exec';
+        
         let allData = [];
         let charts = {};
         let estadoActualId = null;
 
-        // Función para abrir el link en nueva pestaña
-        function abrirLink() {
-            const linkInput = document.getElementById('link');
-            const url = linkInput.value.trim();
-            
-            if (!url) {
-                mostrarToast('⚠️ No hay URL para abrir', '#ffc107');
-                return;
-            }
-            
-            // Validar si es una URL válida
-            let urlValida = url;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                urlValida = 'https://' + url;
-            }
-            
-            try {
-                // Intentar abrir la URL en una nueva pestaña
-                window.open(urlValida, '_blank', 'noopener,noreferrer');
-                mostrarToast('🔗 Abriendo enlace...', '#28a745');
-            } catch(e) {
-                mostrarToast('❌ No se pudo abrir el enlace', '#dc3545');
-            }
-        }
-
-        // Función para copiar texto
-        function copiarTexto(elementId, buttonElement) {
-            const elemento = document.getElementById(elementId);
-            let textoACopiar = '';
-            
-            if (elemento.tagName === 'TEXTAREA' || elemento.tagName === 'INPUT') {
-                textoACopiar = elemento.value;
-            } else {
-                textoACopiar = elemento.textContent;
-            }
-            
-            if (!textoACopiar || textoACopiar.trim() === '') {
-                mostrarToast('⚠️ No hay contenido para copiar', '#ffc107');
-                return;
-            }
-            
-            navigator.clipboard.writeText(textoACopiar).then(() => {
-                const iconoOriginal = buttonElement.innerHTML;
-                buttonElement.innerHTML = '✅';
-                buttonElement.classList.add('copied');
-                
-                mostrarToast('✅ Texto copiado correctamente', '#28a745');
-                
-                setTimeout(() => {
-                    buttonElement.innerHTML = iconoOriginal;
-                    buttonElement.classList.remove('copied');
-                }, 1500);
-            }).catch(err => {
-                console.error('Error al copiar: ', err);
-                mostrarToast('❌ Error al copiar al portapapeles', '#dc3545');
-            });
-        }
-        
-        function mostrarToast(mensaje, color) {
-            const toastExistente = document.querySelector('.copy-feedback-toast');
-            if (toastExistente) toastExistente.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = 'copy-feedback-toast';
-            toast.textContent = mensaje;
-            toast.style.background = color;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 2000);
-        }
-
-        // Lista completa de responsables (ordenada alfabéticamente)
+        // ============================================
+        // LISTA DE RESPONSABLES (Orden alfabético)
+        // ============================================
         const responsablesList = [
             "COMUNICACION",
             "MISS ANGELICA",
@@ -826,6 +709,9 @@
             "PROF. SAMUEL"
         ];
 
+        // ============================================
+        // FUNCIONES DE FORMATEO DE FECHAS
+        // ============================================
         function formatearFechaISO(fechaISO) {
             if (!fechaISO || fechaISO === '-') return '-';
             try {
@@ -840,9 +726,7 @@
                 horas = horas % 12;
                 horas = horas ? horas : 12;
                 return `${dia}/${mes}/${año} ${horas}:${minutos} ${ampm}`;
-            } catch(e) {
-                return fechaISO;
-            }
+            } catch(e) { return fechaISO; }
         }
 
         function formatearSoloFecha(fechaISO) {
@@ -854,9 +738,7 @@
                 const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
                 const año = fecha.getFullYear();
                 return `${dia}/${mes}/${año}`;
-            } catch(e) {
-                return fechaISO;
-            }
+            } catch(e) { return fechaISO; }
         }
 
         function obtenerFechaYYYYMMDD(fechaISO) {
@@ -865,22 +747,146 @@
                 const fecha = new Date(fechaISO);
                 if (isNaN(fecha.getTime())) return null;
                 return fecha.toISOString().split('T')[0];
+            } catch(e) { return null; }
+        }
+
+        function getToday() { 
+            let d = new Date(); 
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; 
+        }
+
+        // ============================================
+        // FUNCIONES DE UTILIDAD
+        // ============================================
+        function mostrarToast(mensaje, color) {
+            const toastExistente = document.querySelector('.copy-feedback-toast');
+            if (toastExistente) toastExistente.remove();
+            const toast = document.createElement('div');
+            toast.className = 'copy-feedback-toast';
+            toast.textContent = mensaje;
+            toast.style.background = color;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function copiarTexto(elementId, buttonElement) {
+            const elemento = document.getElementById(elementId);
+            let textoACopiar = elemento.tagName === 'TEXTAREA' || elemento.tagName === 'INPUT' ? elemento.value : elemento.textContent;
+            if (!textoACopiar || textoACopiar.trim() === '') {
+                mostrarToast('⚠️ No hay contenido para copiar', '#ffc107');
+                return;
+            }
+            navigator.clipboard.writeText(textoACopiar).then(() => {
+                const iconoOriginal = buttonElement.innerHTML;
+                buttonElement.innerHTML = '✅';
+                buttonElement.classList.add('copied');
+                mostrarToast('✅ Texto copiado correctamente', '#28a745');
+                setTimeout(() => {
+                    buttonElement.innerHTML = iconoOriginal;
+                    buttonElement.classList.remove('copied');
+                }, 1500);
+            }).catch(() => mostrarToast('❌ Error al copiar', '#dc3545'));
+        }
+
+        function abrirLink() {
+            const url = document.getElementById('link').value.trim();
+            if (!url) {
+                mostrarToast('⚠️ No hay URL para abrir', '#ffc107');
+                return;
+            }
+            let urlValida = url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                urlValida = 'https://' + url;
+            }
+            try {
+                window.open(urlValida, '_blank', 'noopener,noreferrer');
+                mostrarToast('🔗 Abriendo enlace...', '#28a745');
             } catch(e) {
-                return null;
+                mostrarToast('❌ No se pudo abrir el enlace', '#dc3545');
             }
         }
 
         function llenarSelectResponsables() {
             const filterSelect = document.getElementById('filterResponsable');
             const formSelect = document.getElementById('responsable');
-            const optionsHtml = responsablesList.map(nombre => `<option value="${nombre}">${nombre}</option>`).join('');
+            const optionsHtml = responsablesList.map(n => `<option value="${n}">${n}</option>`).join('');
             filterSelect.innerHTML = '<option value="">Todos</option>' + optionsHtml;
             formSelect.innerHTML = '<option value="">Seleccionar responsable...</option>' + optionsHtml;
         }
 
-        function obtenerPublicacionesHoy() {
-            const hoy = new Date().toISOString().split('T')[0];
-            return allData.filter(item => obtenerFechaYYYYMMDD(item.FECHA_PROG) === hoy);
+        // ============================================
+        // FUNCIONES DE GUARDADO (VERSIÓN CORREGIDA)
+        // ============================================
+        async function guardarDatos(formData, esActualizacion = false) {
+            const btn = document.querySelector('#contentForm .btn-submit');
+            const alertDiv = document.getElementById('modalAlert');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Guardando...';
+            
+            // Depuración: Ver qué datos se envían
+            console.log("=== DATOS ENVIADOS A APPS SCRIPT ===");
+            console.log("contenido_corto:", formData.contenido_corto);
+            console.log("copy_completo:", formData.copy_completo ? formData.copy_completo.substring(0, 50) + "..." : "(vacío)");
+            console.log("fecha_prog:", formData.fecha_prog);
+            console.log("revision:", formData.revision);
+            console.log("responsable:", formData.responsable);
+            console.log("prioridad:", formData.prioridad);
+            console.log("esActualizacion:", esActualizacion);
+            console.log("===================================");
+            
+            try {
+                // Método alternativo: Usar URLSearchParams para mejor compatibilidad
+                const params = new URLSearchParams();
+                params.append('payload', JSON.stringify(formData));
+                
+                const response = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors',
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params
+                });
+                
+                alertDiv.className = 'alert success';
+                alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado! Revisa Google Sheets.';
+                
+                setTimeout(() => { alertDiv.className = 'alert'; }, 3000);
+                
+                if (!esActualizacion) {
+                    document.getElementById('contentForm').reset();
+                    document.getElementById('fecha_prog').value = getToday();
+                    document.getElementById('visualizaciones').value = '0';
+                    document.getElementById('publicado').value = 'No';
+                    document.getElementById('prioridad').value = 'Media';
+                    programarField.classList.remove('show');
+                }
+                
+                setTimeout(() => { 
+                    loadData(); 
+                    modal.classList.remove('active'); 
+                    estadoModal.classList.remove('active'); 
+                    document.body.style.overflow = ''; 
+                }, 2000);
+                
+            } catch(e) {
+                console.error('Error al guardar:', e);
+                alertDiv.className = 'alert error';
+                alertDiv.innerHTML = '❌ Error al guardar: ' + (e.message || 'Error de conexión. Revisa la consola.');
+                setTimeout(() => alertDiv.className = 'alert', 4000);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 Guardar contenido';
+            }
+        }
+
+        // ============================================
+        // FUNCIONES PRINCIPALES
+        // ============================================
+        function actualizarTimestamp() {
+            const ahora = new Date();
+            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('systemTimestamp').innerHTML = `🕐 Fecha y hora del sistema: ${ahora.toLocaleString('es-MX', opciones)}`;
         }
 
         function actualizarPublicacionesHoy() {
@@ -901,37 +907,192 @@
             }
         }
 
-        function getToday() { 
-            let d = new Date(); 
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; 
+        function actualizarGraficos() {
+            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            const mensual = Array(12).fill(0);
+            allData.forEach(r => { 
+                if(r.FECHA_PROG) { 
+                    const fechaProg = obtenerFechaYYYYMMDD(r.FECHA_PROG);
+                    if(fechaProg) {
+                        let m = parseInt(fechaProg.split('-')[1]) - 1; 
+                        if(m >= 0) mensual[m]++; 
+                    }
+                } 
+            });
+            if(charts.mensual) charts.mensual.destroy();
+            charts.mensual = new Chart(document.getElementById('chartMensual'), { type:'bar', data:{ labels:meses, datasets:[{ label:'Publicaciones', data:mensual, backgroundColor:'#1e3c72' }] } });
+            
+            const respCount = {};
+            allData.forEach(r => { if(r.RESPONSABLE) respCount[r.RESPONSABLE] = (respCount[r.RESPONSABLE]||0)+1; });
+            const topResp = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            if(charts.ranking) charts.ranking.destroy();
+            charts.ranking = new Chart(document.getElementById('chartRanking'), { type:'bar', data:{ labels:topResp.map(r=>r[0]), datasets:[{ label:'Contenidos', data:topResp.map(r=>r[1]), backgroundColor:'#2a5298' }] } });
+            
+            const prioridad = { Alta:0, Media:0, Baja:0, Programar:0 };
+            allData.forEach(r => { if(r.PRIORIDAD) prioridad[r.PRIORIDAD] = (prioridad[r.PRIORIDAD]||0) + 1; });
+            if(charts.prioridad) charts.prioridad.destroy();
+            charts.prioridad = new Chart(document.getElementById('chartPrioridadDist'), { type:'doughnut', data:{ labels:['Alta','Media','Baja','Programar'], datasets:[{ data:[prioridad.Alta, prioridad.Media, prioridad.Baja, prioridad.Programar], backgroundColor:['#dc3545','#ffc107','#28a745','#6c757d'] }] } });
+            
+            const estados = { LISTO:0, PENDIENTE:0, 'EN REVISIÓN':0, CORREGIR:0 };
+            allData.forEach(r => { if(r.REVISION && estados[r.REVISION]!==undefined) estados[r.REVISION]++; });
+            if(charts.estado) charts.estado.destroy();
+            charts.estado = new Chart(document.getElementById('chartEstadoDist'), { type:'pie', data:{ labels:Object.keys(estados), datasets:[{ data:Object.values(estados), backgroundColor:['#28a745','#ffc107','#17a2b8','#dc3545'] }] } });
         }
-        document.getElementById('fecha_prog').value = getToday();
 
-        function actualizarTimestamp() {
-            const ahora = new Date();
-            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            document.getElementById('systemTimestamp').innerHTML = `🕐 Fecha y hora del sistema: ${ahora.toLocaleString('es-MX', opciones)}`;
+        function actualizarRanking() {
+            const respStats = {};
+            allData.forEach(r => { 
+                if(!r.RESPONSABLE) return; 
+                if(!respStats[r.RESPONSABLE]) respStats[r.RESPONSABLE] = { total:0, publicados:0, pendientes:0 }; 
+                respStats[r.RESPONSABLE].total++; 
+                if(r.PUBLICADO === 'Sí') respStats[r.RESPONSABLE].publicados++; 
+                else respStats[r.RESPONSABLE].pendientes++; 
+            });
+            const ranking = Object.entries(respStats).map(([nombre,stats])=>({ nombre, total:stats.total, publicados:stats.publicados, pendientes:stats.pendientes, eficiencia:stats.total===0?0:((stats.publicados/stats.total)*100).toFixed(1) })).sort((a,b)=>b.eficiencia - a.eficiencia);
+            const tbody = document.getElementById('rankingTableBody');
+            if(ranking.length===0) tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';
+            else tbody.innerHTML = ranking.map(r => `<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join('');
         }
+
+        function actualizarDashboard() {
+            const total = allData.length, publicados = allData.filter(r => r.PUBLICADO === 'Sí').length, programados = allData.filter(r => r.PRIORIDAD === 'Programar').length;
+            document.getElementById('tasaPublicacion').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
+            document.getElementById('eficienciaEquipo').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
+            document.getElementById('contenidosProgramados').innerHTML = programados;
+            document.getElementById('tiempoPromedio').innerHTML = "2.5";
+            actualizarGraficos(); 
+            actualizarRanking();
+        }
+
+        function filtrarDatos() {
+            const mes = document.getElementById('filterMes').value, nivel = document.getElementById('filterNivel').value, responsable = document.getElementById('filterResponsable').value;
+            const prioridad = document.getElementById('filterPrioridad').value, estado = document.getElementById('filterEstado').value, publicado = document.getElementById('filterPublicado').value;
+            return allData.filter(item => {
+                if(mes && item.FECHA_PROG) { 
+                    const fechaProg = obtenerFechaYYYYMMDD(item.FECHA_PROG);
+                    if(fechaProg) {
+                        let m = fechaProg.split('-')[1]; 
+                        if(m !== mes) return false;
+                    } else return false;
+                }
+                if(nivel && item.NIVEL !== nivel) return false;
+                if(responsable && item.RESPONSABLE !== responsable) return false;
+                if(prioridad && item.PRIORIDAD !== prioridad) return false;
+                if(estado && item.REVISION !== estado) return false;
+                if(publicado && item.PUBLICADO !== publicado) return false;
+                return true;
+            });
+        }
+
+        function aplicarFiltros() {
+            const filtrados = filtrarDatos();
+            document.getElementById('resultCount').innerHTML = filtrados.length;
+            const tbody = document.getElementById('resultsTableBody');
+            if(filtrados.length === 0) tbody.innerHTML = '<tr><td colspan="9">📭 Sin resultados</td></tr>';
+            else tbody.innerHTML = filtrados.map(item => `
+                <tr>
+                    <td><strong>${item.CONTENIDO_CORTO || '-'}</strong></td>
+                    <td>${formatearFechaISO(item.FECHA_REGISTRO) || '-'}</td>
+                    <td>${formatearSoloFecha(item.FECHA_PROG) || '-'}</td>
+                    <td>${item.NIVEL || '-'}</td>
+                    <td>${item.RESPONSABLE || '-'}</td>
+                    <td><span class="badge editable ${item.PRIORIDAD === 'Alta' ? 'alta' : (item.PRIORIDAD === 'Media' ? 'media' : (item.PRIORIDAD === 'Programar' ? 'programar' : 'baja'))}" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')">${item.PRIORIDAD || 'Media'}</span></td>
+                    <td><span class="badge editable pending" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')">${item.REVISION || '-'}</span></td>
+                    <td><span class="badge ${item.PUBLICADO === 'Sí' ? 'published' : 'pending'}">${item.PUBLICADO === 'Sí' ? '✅ Sí' : '❌ No'}</span></td>
+                    <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}')">🗑️ Eliminar</button></div></td>
+                </tr>
+            `).join('');
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filterMes').value = ''; document.getElementById('filterNivel').value = ''; document.getElementById('filterResponsable').value = '';
+            document.getElementById('filterPrioridad').value = ''; document.getElementById('filterEstado').value = ''; document.getElementById('filterPublicado').value = '';
+            aplicarFiltros();
+        }
+
+        function exportarReporte() {
+            const filtrados = filtrarDatos();
+            if(filtrados.length === 0) { alert('No hay datos'); return; }
+            let csv = "Contenido,Fecha Registro,Fecha Programada,Nivel,Responsable,Prioridad,Estado,Publicado\n";
+            filtrados.forEach(i => { csv += `"${i.CONTENIDO_CORTO || ''}","${formatearFechaISO(i.FECHA_REGISTRO) || ''}","${formatearSoloFecha(i.FECHA_PROG) || ''}","${i.NIVEL || ''}","${i.RESPONSABLE || ''}","${i.PRIORIDAD || ''}","${i.REVISION || ''}","${i.PUBLICADO || ''}"\n`; });
+            const blob = new Blob(["\uFEFF" + csv], {type:"text/csv"}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `reporte_gela_${getToday()}.csv`; link.click();
+        }
+
+        async function eliminarContenido(id, titulo) {
+            if (confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) {
+                const formData = { id: id, eliminar: true };
+                try {
+                    const params = new URLSearchParams();
+                    params.append('payload', JSON.stringify(formData));
+                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: params });
+                    alert('✅ Contenido eliminado');
+                    loadData();
+                } catch(e) { alert('❌ Error al eliminar'); }
+            }
+        }
+
+        async function guardarCambioEstado() {
+            const nuevoEstado = document.getElementById('nuevoEstado').value;
+            const nuevoPublicado = document.getElementById('nuevoPublicado').value;
+            const item = allData.find(r => r.ID_UNICO === estadoActualId);
+            if (!item) return;
+            const formData = {
+                id: estadoActualId,
+                contenido_corto: item.CONTENIDO_CORTO,
+                copy_completo: item.COPY_COMPLETO,
+                fecha_prog: item.FECHA_PROG,
+                revision: nuevoEstado,
+                publicado: nuevoPublicado,
+                plataforma: item.PLATAFORMA || '',
+                link: item.LINK || '',
+                nivel: item.NIVEL,
+                responsable: item.RESPONSABLE,
+                elaborado_por: item.ELABORADO_POR,
+                visualizaciones: item.VISUALIZACIONES || '0',
+                prioridad: item.PRIORIDAD || 'Media',
+                observaciones: item.OBSERVACIONES || '',
+                fecha_programacion: item.FECHA_PROGRAMACION || '',
+                esActualizacion: true
+            };
+            await guardarDatos(formData, true);
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
+                if (data.success && data.registros) { 
+                    allData = data.registros; 
+                    actualizarDashboard(); 
+                    aplicarFiltros();
+                    actualizarPublicacionesHoy();
+                    console.log(`✅ Cargados ${allData.length} registros`);
+                } else {
+                    console.warn("No se pudieron cargar datos:", data);
+                }
+            } catch(e) { 
+                console.error('Error al cargar datos:', e); 
+                document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="9">⚠️ Error al cargar datos. Verifica la URL de Apps Script.</td></tr>';
+            }
+        }
+
+        // ============================================
+        // CONFIGURACIÓN DE MODALES Y EVENTOS
+        // ============================================
+        document.getElementById('fecha_prog').value = getToday();
         setInterval(actualizarTimestamp, 1000);
         actualizarTimestamp();
 
         const prioridadSelect = document.getElementById('prioridad');
         const programarField = document.getElementById('programarDateField');
         const fechaProgramacion = document.getElementById('fecha_programacion');
+        
         function toggleProgramarDate() {
             if (prioridadSelect.value === 'Programar') {
                 programarField.classList.add('show');
                 fechaProgramacion.required = true;
-                if (!fechaProgramacion.value) { 
-                    let d = new Date(); 
-                    d.setDate(d.getDate() + 7); 
-                    fechaProgramacion.value = d.toISOString().split('T')[0]; 
-                }
-            } else { 
-                programarField.classList.remove('show'); 
-                fechaProgramacion.required = false; 
-                fechaProgramacion.value = ''; 
-            }
+                if (!fechaProgramacion.value) { let d = new Date(); d.setDate(d.getDate() + 7); fechaProgramacion.value = d.toISOString().split('T')[0]; }
+            } else { programarField.classList.remove('show'); fechaProgramacion.required = false; fechaProgramacion.value = ''; }
         }
         prioridadSelect.addEventListener('change', toggleProgramarDate);
         toggleProgramarDate();
@@ -977,12 +1138,6 @@
             document.body.style.overflow = 'hidden';
         }
 
-        openModalBtn.onclick = () => abrirModal();
-        closeModalBtn.onclick = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
-        modal.onclick = (e) => { if(e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; } };
-        closeEstadoModalBtn.onclick = () => { estadoModal.classList.remove('active'); document.body.style.overflow = ''; };
-        estadoModal.onclick = (e) => { if(e.target === estadoModal) { estadoModal.classList.remove('active'); document.body.style.overflow = ''; } };
-
         function abrirModalEstado(id, titulo, estadoActual, publicadoActual) {
             estadoActualId = id;
             document.getElementById('estadoContenidoTitulo').innerHTML = titulo;
@@ -992,65 +1147,11 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function guardarCambioEstado() {
-            const nuevoEstado = document.getElementById('nuevoEstado').value;
-            const nuevoPublicado = document.getElementById('nuevoPublicado').value;
-            const item = allData.find(r => r.ID_UNICO === estadoActualId);
-            if (!item) return;
-            const formData = {
-                id: estadoActualId,
-                contenido_corto: item.CONTENIDO_CORTO,
-                copy_completo: item.COPY_COMPLETO,
-                fecha_prog: item.FECHA_PROG,
-                revision: nuevoEstado,
-                publicado: nuevoPublicado,
-                plataforma: item.PLATAFORMA || '',
-                link: item.LINK || '',
-                nivel: item.NIVEL,
-                responsable: item.RESPONSABLE,
-                elaborado_por: item.ELABORADO_POR,
-                visualizaciones: item.VISUALIZACIONES || '0',
-                prioridad: item.PRIORIDAD || 'Media',
-                observaciones: item.OBSERVACIONES || '',
-                fecha_programacion: item.FECHA_PROGRAMACION || '',
-                esActualizacion: true
-            };
-            guardarDatos(formData, true);
-        }
-
-        async function guardarDatos(formData, esActualizacion = false) {
-            const btn = document.querySelector('#contentForm .btn-submit');
-            const alertDiv = document.getElementById('modalAlert');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Guardando...';
-            try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-                alertDiv.className = 'alert success';
-                alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado!';
-                setTimeout(() => { alertDiv.className = 'alert'; }, 2000);
-                if (!esActualizacion) document.getElementById('contentForm').reset();
-                document.getElementById('fecha_prog').value = getToday();
-                setTimeout(() => { loadData(); modal.classList.remove('active'); estadoModal.classList.remove('active'); document.body.style.overflow = ''; }, 1000);
-            } catch(e) {
-                alertDiv.className = 'alert error';
-                alertDiv.innerHTML = '❌ Error al guardar';
-                setTimeout(() => { alertDiv.className = 'alert'; }, 2000);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '💾 Guardar contenido';
-            }
-        }
-
-        async function eliminarContenido(id, titulo) {
-            if (confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) {
-                const formData = { id: id, eliminar: true };
-                try {
-                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-                    alert('✅ Contenido eliminado');
-                    loadData();
-                } catch(e) { alert('❌ Error al eliminar'); }
-            }
-        }
+        openModalBtn.onclick = () => abrirModal();
+        closeModalBtn.onclick = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
+        modal.onclick = (e) => { if(e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; } };
+        closeEstadoModalBtn.onclick = () => { estadoModal.classList.remove('active'); document.body.style.overflow = ''; };
+        estadoModal.onclick = (e) => { if(e.target === estadoModal) { estadoModal.classList.remove('active'); document.body.style.overflow = ''; } };
 
         document.getElementById('contentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1081,138 +1182,17 @@
                 fecha_programacion: selectedPrioridad === 'Programar' ? fechaProgramacion.value : '',
                 esActualizacion: !!editId
             };
-            guardarDatos(formData, !!editId);
+            await guardarDatos(formData, !!editId);
         });
 
-        async function loadData() {
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                if (data.success && data.registros) { 
-                    allData = data.registros; 
-                    actualizarDashboard(); 
-                    aplicarFiltros();
-                    actualizarPublicacionesHoy();
-                }
-            } catch(e) { console.error(e); document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="9">⚠️ Error al cargar datos</td></tr>'; }
-        }
-
-        function actualizarDashboard() {
-            const total = allData.length, publicados = allData.filter(r => r.PUBLICADO === 'Sí').length, programados = allData.filter(r => r.PRIORIDAD === 'Programar').length;
-            document.getElementById('tasaPublicacion').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
-            document.getElementById('eficienciaEquipo').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
-            document.getElementById('contenidosProgramados').innerHTML = programados;
-            document.getElementById('tiempoPromedio').innerHTML = "2.5";
-            actualizarGraficos(); 
-            actualizarRanking();
-        }
-
-        function actualizarGraficos() {
-            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-            const mensual = Array(12).fill(0);
-            allData.forEach(r => { 
-                if(r.FECHA_PROG) { 
-                    const fechaProg = obtenerFechaYYYYMMDD(r.FECHA_PROG);
-                    if(fechaProg) {
-                        let m = parseInt(fechaProg.split('-')[1]) - 1; 
-                        if(m >= 0) mensual[m]++; 
-                    }
-                } 
-            });
-            if(charts.mensual) charts.mensual.destroy();
-            charts.mensual = new Chart(document.getElementById('chartMensual'), { type:'bar', data:{ labels:meses, datasets:[{ label:'Publicaciones', data:mensual, backgroundColor:'#1e3c72' }] } });
-            
-            const respCount = {};
-            allData.forEach(r => { if(r.RESPONSABLE) respCount[r.RESPONSABLE] = (respCount[r.RESPONSABLE]||0)+1; });
-            const topResp = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
-            if(charts.ranking) charts.ranking.destroy();
-            charts.ranking = new Chart(document.getElementById('chartRanking'), { type:'bar', data:{ labels:topResp.map(r=>r[0]), datasets:[{ label:'Contenidos', data:topResp.map(r=>r[1]), backgroundColor:'#2a5298' }] } });
-            
-            const prioridad = { Alta:0, Media:0, Baja:0, Programar:0 };
-            allData.forEach(r => { if(r.PRIORIDAD) prioridad[r.PRIORIDAD] = (prioridad[r.PRIORIDAD]||0) + 1; });
-            if(charts.prioridad) charts.prioridad.destroy();
-            charts.prioridad = new Chart(document.getElementById('chartPrioridadDist'), { type:'doughnut', data:{ labels:['Alta','Media','Baja','Programar'], datasets:[{ data:[prioridad.Alta, prioridad.Media, prioridad.Baja, prioridad.Programar], backgroundColor:['#dc3545','#ffc107','#28a745','#6c757d'] }] } });
-            
-            const estados = { LISTO:0, PENDIENTE:0, 'EN REVISIÓN':0, CORREGIR:0 };
-            allData.forEach(r => { if(r.REVISION && estados[r.REVISION]!==undefined) estados[r.REVISION]++; });
-            if(charts.estado) charts.estado.destroy();
-            charts.estado = new Chart(document.getElementById('chartEstadoDist'), { type:'pie', data:{ labels:Object.keys(estados), datasets:[{ data:Object.values(estados), backgroundColor:['#28a745','#ffc107','#17a2b8','#dc3545'] }] } });
-        }
-
-        function actualizarRanking() {
-            const respStats = {};
-            allData.forEach(r => { if(!r.RESPONSABLE) return; if(!respStats[r.RESPONSABLE]) respStats[r.RESPONSABLE] = { total:0, publicados:0, pendientes:0 }; respStats[r.RESPONSABLE].total++; if(r.PUBLICADO === 'Sí') respStats[r.RESPONSABLE].publicados++; else respStats[r.RESPONSABLE].pendientes++; });
-            const ranking = Object.entries(respStats).map(([nombre,stats])=>({ nombre, total:stats.total, publicados:stats.publicados, pendientes:stats.pendientes, eficiencia:stats.total===0?0:((stats.publicados/stats.total)*100).toFixed(1) })).sort((a,b)=>b.eficiencia - a.eficiencia);
-            const tbody = document.getElementById('rankingTableBody');
-            if(ranking.length===0) tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';
-            else tbody.innerHTML = ranking.map(r => `<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join('');
-        }
-
-        function filtrarDatos() {
-            const mes = document.getElementById('filterMes').value, nivel = document.getElementById('filterNivel').value, responsable = document.getElementById('filterResponsable').value;
-            const prioridad = document.getElementById('filterPrioridad').value, estado = document.getElementById('filterEstado').value, publicado = document.getElementById('filterPublicado').value;
-            return allData.filter(item => {
-                if(mes && item.FECHA_PROG) { 
-                    const fechaProg = obtenerFechaYYYYMMDD(item.FECHA_PROG);
-                    if(fechaProg) {
-                        let m = fechaProg.split('-')[1]; 
-                        if(m !== mes) return false;
-                    } else return false;
-                }
-                if(nivel && item.NIVEL !== nivel) return false;
-                if(responsable && item.RESPONSABLE !== responsable) return false;
-                if(prioridad && item.PRIORIDAD !== prioridad) return false;
-                if(estado && item.REVISION !== estado) return false;
-                if(publicado && item.PUBLICADO !== publicado) return false;
-                return true;
-            });
-        }
-
-        function aplicarFiltros() {
-            const filtrados = filtrarDatos();
-            document.getElementById('resultCount').innerHTML = filtrados.length;
-            const tbody = document.getElementById('resultsTableBody');
-            if(filtrados.length === 0) tbody.innerHTML = '<tr><td colspan="9">📭 Sin resultados</td></tr>';
-            else tbody.innerHTML = filtrados.map(item => `
-                <tr>
-                    <td><strong>${item.CONTENIDO_CORTO || '-'}</strong></td>
-                    <td>${formatearFechaISO(item.FECHA_REGISTRO) || '-'}</td>
-                    <td>${formatearSoloFecha(item.FECHA_PROG) || '-'}</td>
-                    <td>${item.NIVEL || '-'}</td>
-                    <td>${item.RESPONSABLE || '-'}</td>
-                    <td><span class="badge editable ${item.PRIORIDAD === 'Alta' ? 'alta' : (item.PRIORIDAD === 'Media' ? 'media' : (item.PRIORIDAD === 'Programar' ? 'programar' : 'baja'))}" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')" title="Click para cambiar estado">${item.PRIORIDAD || 'Media'}</span></td>
-                    <td><span class="badge editable pending" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')" title="Click para cambiar estado">${item.REVISION || '-'}</span></td>
-                    <td><span class="badge ${item.PUBLICADO === 'Sí' ? 'published' : 'pending'}">${item.PUBLICADO === 'Sí' ? '✅ Sí' : '❌ No'}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="abrirModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Editar</button>
-                            <button class="btn-delete" onclick="eliminarContenido('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}')">🗑️ Eliminar</button>
-                        </div>
-                      </td>
-                </tr>
-            `).join('');
-        }
-
-        function limpiarFiltros() {
-            document.getElementById('filterMes').value = ''; document.getElementById('filterNivel').value = ''; document.getElementById('filterResponsable').value = '';
-            document.getElementById('filterPrioridad').value = ''; document.getElementById('filterEstado').value = ''; document.getElementById('filterPublicado').value = '';
-            aplicarFiltros();
-        }
-
-        function exportarReporte() {
-            const filtrados = filtrarDatos();
-            if(filtrados.length === 0) { alert('No hay datos'); return; }
-            let csv = "Contenido,Fecha Registro,Fecha Programada,Nivel,Responsable,Prioridad,Estado,Publicado\n";
-            filtrados.forEach(i => { 
-                csv += `"${i.CONTENIDO_CORTO || ''}","${formatearFechaISO(i.FECHA_REGISTRO) || ''}","${formatearSoloFecha(i.FECHA_PROG) || ''}","${i.NIVEL || ''}","${i.RESPONSABLE || ''}","${i.PRIORIDAD || ''}","${i.REVISION || ''}","${i.PUBLICADO || ''}"\n`; 
-            });
-            const blob = new Blob(["\uFEFF" + csv], {type:"text/csv"}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `reporte_gela_${getToday()}.csv`; link.click();
-        }
-
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
         llenarSelectResponsables();
         loadData();
         setInterval(loadData, 30000);
-        console.log('🚀 GELA - Sistema con botón para abrir enlaces');
+        console.log('🚀 GELA - Sistema iniciado correctamente');
+        console.log('📍 URL de Apps Script configurada:', SCRIPT_URL);
     </script>
 </body>
 </html>
