@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>GELA - Grupo Educativo Los Ángeles</title>
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header { margin-bottom: 30px; animation: fadeInDown 0.5s ease; }
+        .logo-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 15px 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+        }
+        .logo-container:hover { transform: translateY(-2px); }
+        .logo-text .grupo { font-size: 0.8rem; color: #1e3c72; letter-spacing: 2px; font-weight: 600; }
+        .logo-text .nombre { font-size: 1.6rem; font-weight: bold; color: #1e3c72; line-height: 1.2; }
+        .title-container { text-align: center; margin-top: 20px; }
+        .title-container h1 { font-size: clamp(1.8rem, 6vw, 2.8rem); color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .title-container p { font-size: clamp(0.9rem, 4vw, 1.1rem); color: rgba(255,255,255,0.95); }
+        .header-flex { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            animation: fadeInUp 0.5s ease;
+        }
+        .card h2 { margin-bottom: 20px; color: #333; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .metric-card:hover { transform: translateY(-5px); }
+        .metric-card .value { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+        .metric-card .label { font-size: 0.85rem; opacity: 0.9; }
+        
+        .today-posts-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+            grid-column: span 2;
+        }
+        .today-posts-card:hover { transform: translateY(-5px); }
+        .today-posts-card .value { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+        .today-posts-card .label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 10px; }
+        .today-posts-list {
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 12px;
+            margin-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding-top: 10px;
+        }
+        .today-posts-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .today-posts-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+        }
+        .today-posts-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+        .today-post-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .today-post-item:last-child {
+            border-bottom: none;
+        }
+        .today-post-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        .today-post-responsable {
+            font-size: 10px;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .chart-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        .chart-container h3 { margin-bottom: 15px; color: #333; font-size: 1rem; border-left: 3px solid #1e3c72; padding-left: 10px; }
+        canvas { max-height: 250px; width: 100%; }
+        .ranking-table, .results-table { overflow-x: auto; }
+        .ranking-table table, .results-table table { width: 100%; border-collapse: collapse; }
+        .ranking-table th, .ranking-table td, .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        .ranking-table th, .results-table th { background: #f8f9fa; font-weight: 600; color: #495057; }
+        .ranking-table tr:hover, .results-table tr:hover { background: #f8f9fa; }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .filter-group label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 600; }
+        .filter-group select, .filter-group input { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        .btn-filter {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .btn-filter:hover { transform: translateY(-2px); }
+        .btn-clear { background: #6c757d; }
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+            border: none;
+        }
+        .fab:hover { transform: scale(1.1); }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border-radius: 25px 25px 0 0;
+        }
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+        .modal-body { padding: 25px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 13px; }
+        .form-group label.required::after { content: " *"; color: #dc3545; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #1e3c72; }
+        .full-width { grid-column: 1 / -1; }
+        .conditional-field { display: none; }
+        .conditional-field.show { display: block; }
+        .date-field { background: #f8f9fa; padding: 15px; border-radius: 12px; border-left: 4px solid #1e3c72; }
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .alert { padding: 12px; border-radius: 12px; margin-bottom: 20px; display: none; }
+        .alert.success { background: #d4edda; color: #155724; display: block; }
+        .alert.error { background: #f8d7da; color: #721c24; display: block; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .badge.alta { background: #f8d7da; color: #721c24; }
+        .badge.media { background: #fff3cd; color: #856404; }
+        .badge.baja { background: #d4edda; color: #155724; }
+        .badge.published { background: #d4edda; color: #155724; }
+        .badge.pending { background: #fff3cd; color: #856404; }
+        .badge.programar { background: #cce5ff; color: #004085; }
+        .badge.editable { cursor: pointer; transition: transform 0.2s; }
+        .badge.editable:hover { transform: scale(1.05); opacity: 0.8; }
+        .btn-edit {
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-edit:hover { background: #1e3c72; }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-delete:hover { background: #c82333; }
+        .action-buttons { display: flex; gap: 8px; }
+        .timestamp-info {
+            background: #e8f0fe;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-left: 3px solid #1e3c72;
+        }
+        .loading {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Estilos para los botones */
+        .input-with-copy {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .input-with-copy input, 
+        .input-with-copy textarea {
+            flex: 1;
+        }
+        .input-with-copy textarea {
+            resize: vertical;
+        }
+        
+        /* Botón para copiar texto */
+        .btn-copy-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            min-width: 42px;
+            height: 42px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Botón para abrir link */
+        .btn-open-link {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            min-width: 42px;
+            height: 42px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-copy-icon:hover, .btn-open-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .btn-copy-icon:active, .btn-open-link:active {
+            transform: translateY(0);
+        }
+        
+        .btn-copy-icon.copied {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            animation: pulse 0.5s ease;
+        }
+        
+        .btn-open-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-open-link.disabled:hover {
+            transform: none;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-copy-icon, .btn-open-link {
+            position: relative;
+        }
+        
+        .btn-copy-icon::before, .btn-open-link::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-bottom: 5px;
+            font-family: 'Segoe UI', sans-serif;
+            z-index: 1000;
+        }
+        
+        .btn-copy-icon:hover::before, .btn-open-link:hover::before {
+            opacity: 1;
+        }
+        
+        .copy-feedback-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 10000;
+            animation: slideUp 0.3s ease;
+            pointer-events: none;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .card { padding: 20px; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .fab { width: 50px; height: 50px; font-size: 24px; }
+            .input-with-copy { 
+                flex-direction: column;
+            }
+            .btn-copy-icon, .btn-open-link {
+                width: 100%;
+            }
+            .today-posts-card {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-flex">
+                <div class="logo-container">
+                    <div class="logo-text">
+                        <div class="grupo">GRUPO EDUCATIVO</div>
+                        <div class="nombre">LOS ÁNGELES</div>
+                    </div>
+                </div>
+                <div style="flex: 1;"></div>
+            </div>
+            <div class="title-container">
+                <h1>📊 GELA - Gestor de Contenido</h1>
+                <p>Sistema de registro de comunicación | Ciclo Escolar 2025-2026</p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="card">
+            <h2>⚡ Dashboard de Eficiencia</h2>
+            <div class="dashboard-grid">
+                <div class="metric-card"><div class="value" id="tasaPublicacion">0%</div><div class="label">Tasa de Publicación</div></div>
+                <div class="metric-card"><div class="value" id="tiempoPromedio">0</div><div class="label">Tiempo promedio (días)</div></div>
+                <div class="metric-card"><div class="value" id="eficienciaEquipo">0%</div><div class="label">Eficiencia del Equipo</div></div>
+                <div class="metric-card"><div class="value" id="contenidosProgramados">0</div><div class="label">Contenidos Programados</div></div>
+                <div class="today-posts-card">
+                    <div class="value" id="publicacionesHoy">0</div>
+                    <div class="label">📅 Publicaciones del día de hoy</div>
+                    <div class="today-posts-list" id="todayPostsList">
+                        <div style="text-align: center; opacity: 0.8;">Cargando...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-container"><h3>📈 Evolución mensual</h3><canvas id="chartMensual"></canvas></div>
+                <div class="chart-container"><h3>🏆 Ranking por responsable</h3><canvas id="chartRanking"></canvas></div>
+                <div class="chart-container"><h3>📊 Distribución prioridad</h3><canvas id="chartPrioridadDist"></canvas></div>
+                <div class="chart-container"><h3>✅ Estado de contenidos</h3><canvas id="chartEstadoDist"></canvas></div>
+            </div>
+            <h3 style="margin-top:15px;">📋 Ranking de Responsables</h3>
+            <div class="ranking-table">
+                <table>
+                    <thead>
+                        <tr><th>Responsable</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th></tr>
+                    </thead>
+                    <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="card">
+            <h2>🔍 Buscar y Filtrar</h2>
+            <div class="filters-grid">
+                <div class="filter-group"><label>📅 Mes</label>
+                    <select id="filterMes"><option value="">Todos</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select>
+                </div>
+                <div class="filter-group"><label>🏫 Nivel</label>
+                    <select id="filterNivel">
+                        <option value="">Todos</option>
+                        <option value="Bachillerato Salitrillo">Bachillerato Salitrillo</option>
+                        <option value="Centro Universitario Los Ángeles">Centro Universitario Los Ángeles</option>
+                        <option value="Preescolar Centro">Preescolar Centro</option>
+                        <option value="Preescolar San Miguel">Preescolar San Miguel</option>
+                        <option value="Prepa CUA">Prepa CUA</option>
+                        <option value="Primaria Centro">Primaria Centro</option>
+                        <option value="Primaria San Miguel">Primaria San Miguel</option>
+                        <option value="Secundaria Centro">Secundaria Centro</option>
+                        <option value="Secundaria Salitrillo">Secundaria Salitrillo</option>
+                        <option value="Universidad Los Ángeles">Universidad Los Ángeles</option>
+                    </select>
+                </div>
+                <div class="filter-group"><label>👤 Responsable</label>
+                    <select id="filterResponsable">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="filter-group"><label>⭐ Prioridad</label><select id="filterPrioridad"><option value="">Todas</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option><option value="Programar">Programar</option></select></div>
+                <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option><option value="PROGRAMAR">PROGRAMAR</option></select></div>
+                <div class="filter-group"><label>📢 Publicado</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí</option><option value="No">No</option></select></div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-filter" onclick="aplicarFiltros()">🔍 Aplicar</button>
+                <button class="btn-filter btn-clear" onclick="limpiarFiltros()">🗑️ Limpiar</button>
+                <button class="btn-filter" onclick="exportarReporte()">📎 Exportar CSV</button>
+            </div>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div class="card">
+            <h2>📋 Resultados (<span id="resultCount">0</span>)</h2>
+            <div class="results-table">
+                <table style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Contenido</th>
+                            <th>Fecha Registro</th>
+                            <th>Fecha Prog.</th>
+                            <th>Nivel</th>
+                            <th>Responsable</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Publicado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <button class="fab" id="openModalBtn">➕</button>
+
+    <!-- MODAL PARA NUEVO/EDITAR CONTENIDO -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">✏️ Nuevo contenido</h2>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalAlert" class="alert"></div>
+                <div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div>
+                <form id="contentForm">
+                    <input type="hidden" id="editId" value="">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div>
+                        <div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div>
+                        <div class="form-group"><label class="required">✅ Estado / Revisión</label>
+                            <select id="revision" required>
+                                <option value="">Seleccionar</option>
+                                <option value="LISTO">✅ LISTO - Aprobado</option>
+                                <option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option>
+                                <option value="EN REVISIÓN">🔍 EN REVISIÓN</option>
+                                <option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="required">⭐ Prioridad</label>
+                            <select id="prioridad" required>
+                                <option value="Baja">🟢 Baja</option>
+                                <option value="Media" selected>🟡 Media</option>
+                                <option value="Alta">🔴 Alta</option>
+                                <option value="Programar">📅 PROGRAMAR - Agendar</option>
+                            </select>
+                        </div>
+                        <div id="programarDateField" class="conditional-field full-width">
+                            <div class="date-field">
+                                <label>📅 Fecha de programación:</label>
+                                <input type="date" id="fecha_programacion">
+                                <div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>📢 ¿Publicado?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div>
+                        <div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option></select></div>
+                        
+                        <!-- Campo LINK con botón para ABRIR en nueva pestaña -->
+                        <div class="form-group full-width">
+                            <label>🔗 Link</label>
+                            <div class="input-with-copy">
+                                <input type="url" id="link" placeholder="https://">
+                                <button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">
+                                    🔗
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group"><label class="required">🏫 Nivel</label>
+                            <select id="nivel" required>
+                                <option value="">Seleccionar nivel...</option>
+                                <option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option>
+                                <option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option>
+                                <option value="Preescolar Centro">🎨 Preescolar Centro</option>
+                                <option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option>
+                                <option value="Prepa CUA">📚 Prepa CUA</option>
+                                <option value="Primaria Centro">📖 Primaria Centro</option>
+                                <option value="Primaria San Miguel">📖 Primaria San Miguel</option>
+                                <option value="Secundaria Centro">📘 Secundaria Centro</option>
+                                <option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option>
+                                <option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="required">👤 Responsable</label>
+                            <select id="responsable" required>
+                                <option value="">Seleccionar responsable...</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div>
+                        <div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div>
+                        
+                        <!-- Campo COPY COMPLETO con botón de copiar -->
+                        <div class="full-width">
+                            <div class="form-group">
+                                <label class="required">📄 Copy completo</label>
+                                <div class="input-with-copy">
+                                    <textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea>
+                                    <button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div>
+                    </div>
+                    <button type="submit" class="btn-submit">💾 Guardar contenido</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA CAMBIAR ESTADO RÁPIDO -->
+    <div id="estadoModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header"><h2>📝 Cambiar Estado</h2><button class="modal-close" id="closeEstadoModalBtn">&times;</button></div>
+            <div class="modal-body">
+                <div id="estadoModalAlert" class="alert"></div>
+                <p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>✅ Selecciona nuevo estado:</label>
+                    <select id="nuevoEstado" class="form-control" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
+                        <option value="LISTO">✅ LISTO - Aprobado</option>
+                        <option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option>
+                        <option value="EN REVISIÓN">🔍 EN REVISIÓN</option>
+                        <option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>📢 ¿Publicado?</label>
+                    <select id="nuevoPublicado" class="form-control" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;">
+                        <option value="No">❌ No</option>
+                        <option value="Sí">✅ Sí</option>
+                    </select>
+                </div>
+                <button class="btn-submit" onclick="guardarCambioEstado()" style="margin-top: 15px;">💾 Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/TU_URL_AQUI/exec';
+        let allData = [];
+        let charts = {};
+        let estadoActualId = null;
+
+        // Función para abrir el link en nueva pestaña
+        function abrirLink() {
+            const linkInput = document.getElementById('link');
+            const url = linkInput.value.trim();
+            
+            if (!url) {
+                mostrarToast('⚠️ No hay URL para abrir', '#ffc107');
+                return;
+            }
+            
+            // Validar si es una URL válida
+            let urlValida = url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                urlValida = 'https://' + url;
+            }
+            
+            try {
+                // Intentar abrir la URL en una nueva pestaña
+                window.open(urlValida, '_blank', 'noopener,noreferrer');
+                mostrarToast('🔗 Abriendo enlace...', '#28a745');
+            } catch(e) {
+                mostrarToast('❌ No se pudo abrir el enlace', '#dc3545');
+            }
+        }
+
+        // Función para copiar texto
+        function copiarTexto(elementId, buttonElement) {
+            const elemento = document.getElementById(elementId);
+            let textoACopiar = '';
+            
+            if (elemento.tagName === 'TEXTAREA' || elemento.tagName === 'INPUT') {
+                textoACopiar = elemento.value;
+            } else {
+                textoACopiar = elemento.textContent;
+            }
+            
+            if (!textoACopiar || textoACopiar.trim() === '') {
+                mostrarToast('⚠️ No hay contenido para copiar', '#ffc107');
+                return;
+            }
+            
+            navigator.clipboard.writeText(textoACopiar).then(() => {
+                const iconoOriginal = buttonElement.innerHTML;
+                buttonElement.innerHTML = '✅';
+                buttonElement.classList.add('copied');
+                
+                mostrarToast('✅ Texto copiado correctamente', '#28a745');
+                
+                setTimeout(() => {
+                    buttonElement.innerHTML = iconoOriginal;
+                    buttonElement.classList.remove('copied');
+                }, 1500);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                mostrarToast('❌ Error al copiar al portapapeles', '#dc3545');
+            });
+        }
+        
+        function mostrarToast(mensaje, color) {
+            const toastExistente = document.querySelector('.copy-feedback-toast');
+            if (toastExistente) toastExistente.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'copy-feedback-toast';
+            toast.textContent = mensaje;
+            toast.style.background = color;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        // Lista completa de responsables (ordenada alfabéticamente)
+        const responsablesList = [
+            "COMUNICACION",
+            "MISS ANGELICA",
+            "MISS AURORA",
+            "MISS BERE",
+            "MISS ELENA",
+            "MISS JAZMIN",
+            "MISS JAZMIN ORTIZ",
+            "MISS JESYCA",
+            "MISS LETY",
+            "MISS LOLITA",
+            "MISS LUCY",
+            "MISS MALE",
+            "MISS MAYTE",
+            "MISS MONICA",
+            "MISS NIDIA",
+            "MISS OLGA",
+            "MISS ROSARIO",
+            "MISS SOL",
+            "MISS TATIANA",
+            "MTRO. HUMBERTO",
+            "PROF. FERNANDO",
+            "PROF. JESUS",
+            "PROF. JOEL",
+            "PROF. MIGUEL",
+            "PROF. SAMUEL"
+        ];
+
+        function formatearFechaISO(fechaISO) {
+            if (!fechaISO || fechaISO === '-') return '-';
+            try {
+                const fecha = new Date(fechaISO);
+                if (isNaN(fecha.getTime())) return fechaISO;
+                const dia = fecha.getDate().toString().padStart(2, '0');
+                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                const año = fecha.getFullYear();
+                let horas = fecha.getHours();
+                const minutos = fecha.getMinutes().toString().padStart(2, '0');
+                const ampm = horas >= 12 ? 'PM' : 'AM';
+                horas = horas % 12;
+                horas = horas ? horas : 12;
+                return `${dia}/${mes}/${año} ${horas}:${minutos} ${ampm}`;
+            } catch(e) {
+                return fechaISO;
+            }
+        }
+
+        function formatearSoloFecha(fechaISO) {
+            if (!fechaISO || fechaISO === '-' || fechaISO === 'undefined' || fechaISO === 'null') return '-';
+            try {
+                const fecha = new Date(fechaISO);
+                if (isNaN(fecha.getTime())) return fechaISO;
+                const dia = fecha.getDate().toString().padStart(2, '0');
+                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                const año = fecha.getFullYear();
+                return `${dia}/${mes}/${año}`;
+            } catch(e) {
+                return fechaISO;
+            }
+        }
+
+        function obtenerFechaYYYYMMDD(fechaISO) {
+            if (!fechaISO) return null;
+            try {
+                const fecha = new Date(fechaISO);
+                if (isNaN(fecha.getTime())) return null;
+                return fecha.toISOString().split('T')[0];
+            } catch(e) {
+                return null;
+            }
+        }
+
+        function llenarSelectResponsables() {
+            const filterSelect = document.getElementById('filterResponsable');
+            const formSelect = document.getElementById('responsable');
+            const optionsHtml = responsablesList.map(nombre => `<option value="${nombre}">${nombre}</option>`).join('');
+            filterSelect.innerHTML = '<option value="">Todos</option>' + optionsHtml;
+            formSelect.innerHTML = '<option value="">Seleccionar responsable...</option>' + optionsHtml;
+        }
+
+        function obtenerPublicacionesHoy() {
+            const hoy = new Date().toISOString().split('T')[0];
+            return allData.filter(item => obtenerFechaYYYYMMDD(item.FECHA_PROG) === hoy);
+        }
+
+        function actualizarPublicacionesHoy() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const publicacionesHoy = allData.filter(item => obtenerFechaYYYYMMDD(item.FECHA_PROG) === hoy);
+            const cantidad = publicacionesHoy.length;
+            document.getElementById('publicacionesHoy').innerHTML = cantidad;
+            const container = document.getElementById('todayPostsList');
+            if (cantidad === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.8;">📭 No hay publicaciones programadas para hoy</div>';
+            } else {
+                container.innerHTML = publicacionesHoy.map(item => `
+                    <div class="today-post-item">
+                        <span class="today-post-title" title="${item.CONTENIDO_CORTO || ''}">📄 ${item.CONTENIDO_CORTO || 'Sin título'}</span>
+                        <span class="today-post-responsable">👤 ${item.RESPONSABLE || 'N/A'}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getToday() { 
+            let d = new Date(); 
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; 
+        }
+        document.getElementById('fecha_prog').value = getToday();
+
+        function actualizarTimestamp() {
+            const ahora = new Date();
+            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('systemTimestamp').innerHTML = `🕐 Fecha y hora del sistema: ${ahora.toLocaleString('es-MX', opciones)}`;
+        }
+        setInterval(actualizarTimestamp, 1000);
+        actualizarTimestamp();
+
+        const prioridadSelect = document.getElementById('prioridad');
+        const programarField = document.getElementById('programarDateField');
+        const fechaProgramacion = document.getElementById('fecha_programacion');
+        function toggleProgramarDate() {
+            if (prioridadSelect.value === 'Programar') {
+                programarField.classList.add('show');
+                fechaProgramacion.required = true;
+                if (!fechaProgramacion.value) { 
+                    let d = new Date(); 
+                    d.setDate(d.getDate() + 7); 
+                    fechaProgramacion.value = d.toISOString().split('T')[0]; 
+                }
+            } else { 
+                programarField.classList.remove('show'); 
+                fechaProgramacion.required = false; 
+                fechaProgramacion.value = ''; 
+            }
+        }
+        prioridadSelect.addEventListener('change', toggleProgramarDate);
+        toggleProgramarDate();
+
+        const modal = document.getElementById('eventModal');
+        const estadoModal = document.getElementById('estadoModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeEstadoModalBtn = document.getElementById('closeEstadoModalBtn');
+
+        function abrirModal(editItem = null) {
+            if (editItem) {
+                document.getElementById('modalTitle').innerHTML = '✏️ Editar contenido';
+                document.getElementById('editId').value = editItem.ID_UNICO || '';
+                document.getElementById('contenido_corto').value = editItem.CONTENIDO_CORTO || '';
+                document.getElementById('copy_completo').value = editItem.COPY_COMPLETO || '';
+                document.getElementById('fecha_prog').value = obtenerFechaYYYYMMDD(editItem.FECHA_PROG) || getToday();
+                document.getElementById('revision').value = editItem.REVISION || 'PENDIENTE';
+                document.getElementById('publicado').value = editItem.PUBLICADO || 'No';
+                document.getElementById('plataforma').value = editItem.PLATAFORMA || '';
+                document.getElementById('link').value = editItem.LINK || '';
+                document.getElementById('nivel').value = editItem.NIVEL || '';
+                document.getElementById('responsable').value = editItem.RESPONSABLE || '';
+                document.getElementById('elaborado_por').value = editItem.ELABORADO_POR || '';
+                document.getElementById('visualizaciones').value = editItem.VISUALIZACIONES || '0';
+                document.getElementById('prioridad').value = editItem.PRIORIDAD || 'Media';
+                document.getElementById('observaciones').value = editItem.OBSERVACIONES || '';
+                if (editItem.PRIORIDAD === 'Programar') {
+                    document.getElementById('fecha_programacion').value = editItem.FECHA_PROGRAMACION || '';
+                    setTimeout(() => toggleProgramarDate(), 100);
+                }
+            } else {
+                document.getElementById('modalTitle').innerHTML = '✏️ Nuevo contenido';
+                document.getElementById('editId').value = '';
+                document.getElementById('contentForm').reset();
+                document.getElementById('fecha_prog').value = getToday();
+                document.getElementById('publicado').value = 'No';
+                document.getElementById('prioridad').value = 'Media';
+                document.getElementById('visualizaciones').value = '0';
+                programarField.classList.remove('show');
+            }
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        openModalBtn.onclick = () => abrirModal();
+        closeModalBtn.onclick = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
+        modal.onclick = (e) => { if(e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; } };
+        closeEstadoModalBtn.onclick = () => { estadoModal.classList.remove('active'); document.body.style.overflow = ''; };
+        estadoModal.onclick = (e) => { if(e.target === estadoModal) { estadoModal.classList.remove('active'); document.body.style.overflow = ''; } };
+
+        function abrirModalEstado(id, titulo, estadoActual, publicadoActual) {
+            estadoActualId = id;
+            document.getElementById('estadoContenidoTitulo').innerHTML = titulo;
+            document.getElementById('nuevoEstado').value = estadoActual || 'PENDIENTE';
+            document.getElementById('nuevoPublicado').value = publicadoActual || 'No';
+            estadoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function guardarCambioEstado() {
+            const nuevoEstado = document.getElementById('nuevoEstado').value;
+            const nuevoPublicado = document.getElementById('nuevoPublicado').value;
+            const item = allData.find(r => r.ID_UNICO === estadoActualId);
+            if (!item) return;
+            const formData = {
+                id: estadoActualId,
+                contenido_corto: item.CONTENIDO_CORTO,
+                copy_completo: item.COPY_COMPLETO,
+                fecha_prog: item.FECHA_PROG,
+                revision: nuevoEstado,
+                publicado: nuevoPublicado,
+                plataforma: item.PLATAFORMA || '',
+                link: item.LINK || '',
+                nivel: item.NIVEL,
+                responsable: item.RESPONSABLE,
+                elaborado_por: item.ELABORADO_POR,
+                visualizaciones: item.VISUALIZACIONES || '0',
+                prioridad: item.PRIORIDAD || 'Media',
+                observaciones: item.OBSERVACIONES || '',
+                fecha_programacion: item.FECHA_PROGRAMACION || '',
+                esActualizacion: true
+            };
+            guardarDatos(formData, true);
+        }
+
+        async function guardarDatos(formData, esActualizacion = false) {
+            const btn = document.querySelector('#contentForm .btn-submit');
+            const alertDiv = document.getElementById('modalAlert');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Guardando...';
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+                alertDiv.className = 'alert success';
+                alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado!';
+                setTimeout(() => { alertDiv.className = 'alert'; }, 2000);
+                if (!esActualizacion) document.getElementById('contentForm').reset();
+                document.getElementById('fecha_prog').value = getToday();
+                setTimeout(() => { loadData(); modal.classList.remove('active'); estadoModal.classList.remove('active'); document.body.style.overflow = ''; }, 1000);
+            } catch(e) {
+                alertDiv.className = 'alert error';
+                alertDiv.innerHTML = '❌ Error al guardar';
+                setTimeout(() => { alertDiv.className = 'alert'; }, 2000);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 Guardar contenido';
+            }
+        }
+
+        async function eliminarContenido(id, titulo) {
+            if (confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) {
+                const formData = { id: id, eliminar: true };
+                try {
+                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+                    alert('✅ Contenido eliminado');
+                    loadData();
+                } catch(e) { alert('❌ Error al eliminar'); }
+            }
+        }
+
+        document.getElementById('contentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('editId').value;
+            const selectedPrioridad = document.getElementById('prioridad').value;
+            if (selectedPrioridad === 'Programar' && !fechaProgramacion.value) {
+                document.getElementById('modalAlert').className = 'alert error';
+                document.getElementById('modalAlert').innerHTML = '❌ Debes elegir una fecha de programación';
+                setTimeout(() => { document.getElementById('modalAlert').className = 'alert'; }, 3000);
+                return;
+            }
+            const formData = {
+                id: editId || null,
+                contenido_corto: document.getElementById('contenido_corto').value,
+                copy_completo: document.getElementById('copy_completo').value,
+                fecha_prog: document.getElementById('fecha_prog').value,
+                fecha_registro: new Date().toLocaleString('es-MX'),
+                revision: document.getElementById('revision').value,
+                publicado: document.getElementById('publicado').value,
+                plataforma: document.getElementById('plataforma').value,
+                link: document.getElementById('link').value || '',
+                nivel: document.getElementById('nivel').value,
+                responsable: document.getElementById('responsable').value,
+                elaborado_por: document.getElementById('elaborado_por').value,
+                visualizaciones: document.getElementById('visualizaciones').value || '0',
+                prioridad: selectedPrioridad,
+                observaciones: document.getElementById('observaciones').value || '',
+                fecha_programacion: selectedPrioridad === 'Programar' ? fechaProgramacion.value : '',
+                esActualizacion: !!editId
+            };
+            guardarDatos(formData, !!editId);
+        });
+
+        async function loadData() {
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
+                if (data.success && data.registros) { 
+                    allData = data.registros; 
+                    actualizarDashboard(); 
+                    aplicarFiltros();
+                    actualizarPublicacionesHoy();
+                }
+            } catch(e) { console.error(e); document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="9">⚠️ Error al cargar datos</td></tr>'; }
+        }
+
+        function actualizarDashboard() {
+            const total = allData.length, publicados = allData.filter(r => r.PUBLICADO === 'Sí').length, programados = allData.filter(r => r.PRIORIDAD === 'Programar').length;
+            document.getElementById('tasaPublicacion').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
+            document.getElementById('eficienciaEquipo').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
+            document.getElementById('contenidosProgramados').innerHTML = programados;
+            document.getElementById('tiempoPromedio').innerHTML = "2.5";
+            actualizarGraficos(); 
+            actualizarRanking();
+        }
+
+        function actualizarGraficos() {
+            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            const mensual = Array(12).fill(0);
+            allData.forEach(r => { 
+                if(r.FECHA_PROG) { 
+                    const fechaProg = obtenerFechaYYYYMMDD(r.FECHA_PROG);
+                    if(fechaProg) {
+                        let m = parseInt(fechaProg.split('-')[1]) - 1; 
+                        if(m >= 0) mensual[m]++; 
+                    }
+                } 
+            });
+            if(charts.mensual) charts.mensual.destroy();
+            charts.mensual = new Chart(document.getElementById('chartMensual'), { type:'bar', data:{ labels:meses, datasets:[{ label:'Publicaciones', data:mensual, backgroundColor:'#1e3c72' }] } });
+            
+            const respCount = {};
+            allData.forEach(r => { if(r.RESPONSABLE) respCount[r.RESPONSABLE] = (respCount[r.RESPONSABLE]||0)+1; });
+            const topResp = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            if(charts.ranking) charts.ranking.destroy();
+            charts.ranking = new Chart(document.getElementById('chartRanking'), { type:'bar', data:{ labels:topResp.map(r=>r[0]), datasets:[{ label:'Contenidos', data:topResp.map(r=>r[1]), backgroundColor:'#2a5298' }] } });
+            
+            const prioridad = { Alta:0, Media:0, Baja:0, Programar:0 };
+            allData.forEach(r => { if(r.PRIORIDAD) prioridad[r.PRIORIDAD] = (prioridad[r.PRIORIDAD]||0) + 1; });
+            if(charts.prioridad) charts.prioridad.destroy();
+            charts.prioridad = new Chart(document.getElementById('chartPrioridadDist'), { type:'doughnut', data:{ labels:['Alta','Media','Baja','Programar'], datasets:[{ data:[prioridad.Alta, prioridad.Media, prioridad.Baja, prioridad.Programar], backgroundColor:['#dc3545','#ffc107','#28a745','#6c757d'] }] } });
+            
+            const estados = { LISTO:0, PENDIENTE:0, 'EN REVISIÓN':0, CORREGIR:0 };
+            allData.forEach(r => { if(r.REVISION && estados[r.REVISION]!==undefined) estados[r.REVISION]++; });
+            if(charts.estado) charts.estado.destroy();
+            charts.estado = new Chart(document.getElementById('chartEstadoDist'), { type:'pie', data:{ labels:Object.keys(estados), datasets:[{ data:Object.values(estados), backgroundColor:['#28a745','#ffc107','#17a2b8','#dc3545'] }] } });
+        }
+
+        function actualizarRanking() {
+            const respStats = {};
+            allData.forEach(r => { if(!r.RESPONSABLE) return; if(!respStats[r.RESPONSABLE]) respStats[r.RESPONSABLE] = { total:0, publicados:0, pendientes:0 }; respStats[r.RESPONSABLE].total++; if(r.PUBLICADO === 'Sí') respStats[r.RESPONSABLE].publicados++; else respStats[r.RESPONSABLE].pendientes++; });
+            const ranking = Object.entries(respStats).map(([nombre,stats])=>({ nombre, total:stats.total, publicados:stats.publicados, pendientes:stats.pendientes, eficiencia:stats.total===0?0:((stats.publicados/stats.total)*100).toFixed(1) })).sort((a,b)=>b.eficiencia - a.eficiencia);
+            const tbody = document.getElementById('rankingTableBody');
+            if(ranking.length===0) tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';
+            else tbody.innerHTML = ranking.map(r => `<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join('');
+        }
+
+        function filtrarDatos() {
+            const mes = document.getElementById('filterMes').value, nivel = document.getElementById('filterNivel').value, responsable = document.getElementById('filterResponsable').value;
+            const prioridad = document.getElementById('filterPrioridad').value, estado = document.getElementById('filterEstado').value, publicado = document.getElementById('filterPublicado').value;
+            return allData.filter(item => {
+                if(mes && item.FECHA_PROG) { 
+                    const fechaProg = obtenerFechaYYYYMMDD(item.FECHA_PROG);
+                    if(fechaProg) {
+                        let m = fechaProg.split('-')[1]; 
+                        if(m !== mes) return false;
+                    } else return false;
+                }
+                if(nivel && item.NIVEL !== nivel) return false;
+                if(responsable && item.RESPONSABLE !== responsable) return false;
+                if(prioridad && item.PRIORIDAD !== prioridad) return false;
+                if(estado && item.REVISION !== estado) return false;
+                if(publicado && item.PUBLICADO !== publicado) return false;
+                return true;
+            });
+        }
+
+        function aplicarFiltros() {
+            const filtrados = filtrarDatos();
+            document.getElementById('resultCount').innerHTML = filtrados.length;
+            const tbody = document.getElementById('resultsTableBody');
+            if(filtrados.length === 0) tbody.innerHTML = '<tr><td colspan="9">📭 Sin resultados</td></tr>';
+            else tbody.innerHTML = filtrados.map(item => `
+                <tr>
+                    <td><strong>${item.CONTENIDO_CORTO || '-'}</strong></td>
+                    <td>${formatearFechaISO(item.FECHA_REGISTRO) || '-'}</td>
+                    <td>${formatearSoloFecha(item.FECHA_PROG) || '-'}</td>
+                    <td>${item.NIVEL || '-'}</td>
+                    <td>${item.RESPONSABLE || '-'}</td>
+                    <td><span class="badge editable ${item.PRIORIDAD === 'Alta' ? 'alta' : (item.PRIORIDAD === 'Media' ? 'media' : (item.PRIORIDAD === 'Programar' ? 'programar' : 'baja'))}" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')" title="Click para cambiar estado">${item.PRIORIDAD || 'Media'}</span></td>
+                    <td><span class="badge editable pending" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')" title="Click para cambiar estado">${item.REVISION || '-'}</span></td>
+                    <td><span class="badge ${item.PUBLICADO === 'Sí' ? 'published' : 'pending'}">${item.PUBLICADO === 'Sí' ? '✅ Sí' : '❌ No'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-edit" onclick="abrirModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Editar</button>
+                            <button class="btn-delete" onclick="eliminarContenido('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}')">🗑️ Eliminar</button>
+                        </div>
+                      </td>
+                </tr>
+            `).join('');
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filterMes').value = ''; document.getElementById('filterNivel').value = ''; document.getElementById('filterResponsable').value = '';
+            document.getElementById('filterPrioridad').value = ''; document.getElementById('filterEstado').value = ''; document.getElementById('filterPublicado').value = '';
+            aplicarFiltros();
+        }
+
+        function exportarReporte() {
+            const filtrados = filtrarDatos();
+            if(filtrados.length === 0) { alert('No hay datos'); return; }
+            let csv = "Contenido,Fecha Registro,Fecha Programada,Nivel,Responsable,Prioridad,Estado,Publicado\n";
+            filtrados.forEach(i => { 
+                csv += `"${i.CONTENIDO_CORTO || ''}","${formatearFechaISO(i.FECHA_REGISTRO) || ''}","${formatearSoloFecha(i.FECHA_PROG) || ''}","${i.NIVEL || ''}","${i.RESPONSABLE || ''}","${i.PRIORIDAD || ''}","${i.REVISION || ''}","${i.PUBLICADO || ''}"\n`; 
+            });
+            const blob = new Blob(["\uFEFF" + csv], {type:"text/csv"}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `reporte_gela_${getToday()}.csv`; link.click();
+        }
+
+        llenarSelectResponsables();
+        loadData();
+        setInterval(loadData, 30000);
+        console.log('🚀 GELA - Sistema con botón para abrir enlaces');
+    </script>
+</body>
+</html>
