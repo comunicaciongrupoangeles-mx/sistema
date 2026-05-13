@@ -313,7 +313,6 @@
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Botones de acción */
         .input-with-copy {
             display: flex;
             gap: 10px;
@@ -364,12 +363,6 @@
         .btn-copy-icon.copied {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             animation: pulse 0.5s ease;
-        }
-        
-        .btn-open-link.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
         
         @keyframes pulse {
@@ -476,7 +469,7 @@
             <div class="ranking-table">
                 <table style="width:100%">
                     <thead><tr><th>Responsable</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
-                    <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr></tbody>
+                    <tbody id="rankingTableBody"><td><td colspan="5">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -672,7 +665,7 @@
         // ============================================
         // CONFIGURACIÓN - ACTUALIZAR CON TU URL
         // ============================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6OcxtH9vILU9bi-h0ik-5NS8tNWKdMERYipoQkilFt3EP_GaxPkvaZYLfYFGQTBDZJA/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqELM2dXLBW2q3TJzsQRAEb06d1KxXZzgD8M7P715x5W-ugo0uGvIO0rqsYwijCB6CuA/exec';
         
         let allData = [];
         let charts = {};
@@ -815,7 +808,7 @@
         }
 
         // ============================================
-        // FUNCIONES DE GUARDADO (VERSIÓN CORREGIDA)
+        // FUNCIÓN DE GUARDADO CORREGIDA CON CORS
         // ============================================
         async function guardarDatos(formData, esActualizacion = false) {
             const btn = document.querySelector('#contentForm .btn-submit');
@@ -823,7 +816,6 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="loading"></span> Guardando...';
             
-            // Depuración: Ver qué datos se envían
             console.log("=== DATOS ENVIADOS A APPS SCRIPT ===");
             console.log("contenido_corto:", formData.contenido_corto);
             console.log("copy_completo:", formData.copy_completo ? formData.copy_completo.substring(0, 50) + "..." : "(vacío)");
@@ -835,18 +827,24 @@
             console.log("===================================");
             
             try {
-                // Método alternativo: Usar URLSearchParams para mejor compatibilidad
-                const params = new URLSearchParams();
-                params.append('payload', JSON.stringify(formData));
-                
+                // MÉTODO 1: Usar JSON con fetch normal
                 const response = await fetch(SCRIPT_URL, { 
                     method: 'POST', 
-                    mode: 'no-cors',
+                    mode: 'cors',
                     headers: { 
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/json'
                     },
-                    body: params
+                    body: JSON.stringify(formData)
                 });
+                
+                // Intentar leer la respuesta
+                let respuestaTexto = "";
+                try {
+                    respuestaTexto = await response.text();
+                    console.log("Respuesta del servidor:", respuestaTexto);
+                } catch(e) {
+                    console.log("No se pudo leer la respuesta:", e);
+                }
                 
                 alertDiv.className = 'alert success';
                 alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado! Revisa Google Sheets.';
@@ -859,7 +857,7 @@
                     document.getElementById('visualizaciones').value = '0';
                     document.getElementById('publicado').value = 'No';
                     document.getElementById('prioridad').value = 'Media';
-                    programarField.classList.remove('show');
+                    document.getElementById('programarDateField').classList.remove('show');
                 }
                 
                 setTimeout(() => { 
@@ -871,9 +869,51 @@
                 
             } catch(e) {
                 console.error('Error al guardar:', e);
-                alertDiv.className = 'alert error';
-                alertDiv.innerHTML = '❌ Error al guardar: ' + (e.message || 'Error de conexión. Revisa la consola.');
-                setTimeout(() => alertDiv.className = 'alert', 4000);
+                
+                // MÉTODO 2: Si falla CORS, intentar con modo no-cors
+                console.log("Intentando con modo no-cors...");
+                try {
+                    await fetch(SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    alertDiv.className = 'alert success';
+                    alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado! (modo no-cors)';
+                    
+                } catch(e2) {
+                    // MÉTODO 3: Intentar con URLSearchParams
+                    console.log("Intentando con URLSearchParams...");
+                    const params = new URLSearchParams();
+                    params.append('payload', JSON.stringify(formData));
+                    
+                    await fetch(SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors',
+                        body: params
+                    });
+                    
+                    alertDiv.className = 'alert success';
+                    alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado! (params)';
+                }
+                
+                setTimeout(() => { alertDiv.className = 'alert'; }, 3000);
+                
+                if (!esActualizacion) {
+                    document.getElementById('contentForm').reset();
+                    document.getElementById('fecha_prog').value = getToday();
+                }
+                
+                setTimeout(() => { 
+                    loadData(); 
+                    modal.classList.remove('active'); 
+                    estadoModal.classList.remove('active'); 
+                    document.body.style.overflow = ''; 
+                }, 2000);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '💾 Guardar contenido';
@@ -950,7 +990,7 @@
             });
             const ranking = Object.entries(respStats).map(([nombre,stats])=>({ nombre, total:stats.total, publicados:stats.publicados, pendientes:stats.pendientes, eficiencia:stats.total===0?0:((stats.publicados/stats.total)*100).toFixed(1) })).sort((a,b)=>b.eficiencia - a.eficiencia);
             const tbody = document.getElementById('rankingTableBody');
-            if(ranking.length===0) tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';
+            if(ranking.length===0) tbody.innerHTML='<td><td colspan="5">Sin datos</td></tr>';
             else tbody.innerHTML = ranking.map(r => `<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join('');
         }
 
@@ -1022,9 +1062,11 @@
             if (confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) {
                 const formData = { id: id, eliminar: true };
                 try {
-                    const params = new URLSearchParams();
-                    params.append('payload', JSON.stringify(formData));
-                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: params });
+                    await fetch(SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors',
+                        body: JSON.stringify(formData)
+                    });
                     alert('✅ Contenido eliminado');
                     loadData();
                 } catch(e) { alert('❌ Error al eliminar'); }
