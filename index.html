@@ -59,8 +59,9 @@
         .metric-card:hover { transform: translateY(-5px); }
         .metric-card .value { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
         .metric-card .label { font-size: 0.85rem; opacity: 0.9; }
+        .metric-card .sub-stats { margin-top: 10px; font-size: 0.75rem; display: flex; justify-content: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px; }
+        .metric-card .sub-stats span { display: inline-flex; align-items: center; gap: 5px; }
         
-        /* Tarjeta especial para el colaborador estrella */
         .star-card {
             background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
             color: #333;
@@ -165,6 +166,7 @@
         .ranking-table th, .ranking-table td, .results-table th, .results-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
         .ranking-table th, .results-table th { background: #f8f9fa; font-weight: 600; color: #495057; }
         .ranking-table tr:hover, .results-table tr:hover { background: #f8f9fa; }
+        
         .filters-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -448,6 +450,11 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
+        .fecha-proxima {
+            color: #dc3545 !important;
+            font-weight: bold !important;
+        }
+        
         @keyframes slideUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -462,6 +469,7 @@
             .input-with-copy { flex-direction: column; }
             .btn-copy-icon, .btn-open-link { width: 100%; }
             .today-posts-card { grid-column: span 1; }
+            .metric-card .sub-stats { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
@@ -482,25 +490,25 @@
             </div>
         </div>
 
-        <!-- DASHBOARD -->
         <div class="card">
             <h2>⚡ Dashboard de Eficiencia</h2>
             <div class="dashboard-grid">
                 <div class="metric-card"><div class="value" id="tasaPublicacion">0%</div><div class="label">Tasa de Publicación</div></div>
-                <div class="metric-card"><div class="value" id="tiempoPromedio">0</div><div class="label">Tiempo promedio (días)</div></div>
+                <div class="metric-card">
+                    <div class="value" id="totalPublicaciones">0</div>
+                    <div class="label">Total de Publicaciones</div>
+                    <div class="sub-stats" id="detallePublicaciones">
+                        <span>✅ Publicadas: <strong id="pubPublicadas">0</strong></span>
+                        <span>❌ No publicadas: <strong id="pubNoPublicadas">0</strong></span>
+                    </div>
+                </div>
                 <div class="metric-card"><div class="value" id="eficienciaEquipo">0%</div><div class="label">Eficiencia del Equipo</div></div>
                 <div class="metric-card"><div class="value" id="contenidosProgramados">0</div><div class="label">Contenidos Programados</div></div>
-                
-                <!-- NUEVA TARJETA: COLABORADOR ESTRELLA (el que más contenidos tiene) -->
                 <div class="metric-card star-card">
-                    <div class="value">
-                        <span class="star-icon">⭐</span>
-                        <span id="colaboradorEstrella">---</span>
-                    </div>
+                    <div class="value"><span class="star-icon">⭐</span><span id="colaboradorEstrella">---</span></div>
                     <div class="label">🏆 Colaborador Estrella</div>
                     <div class="sub-value" id="estrellaContenidos">0 contenidos</div>
                 </div>
-                
                 <div class="today-posts-card">
                     <div class="value" id="publicacionesHoy">0</div>
                     <div class="label">📅 Publicaciones del día de hoy</div>
@@ -520,48 +528,21 @@
                     <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
                 </table>
             </div>
-            <!-- RANKING POR ELABORADO POR - Ordenado por total de contenidos (mayor a menor) -->
-            <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por" (por total de contenidos)</h3>
+            <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por"</h3>
             <div class="ranking-table">
                 <table style="width:100%">
-                    <thead>
-                        <tr><th>Elaborado por</th><th>Total de contenidos</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr>
-                    </thead>
+                    <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr></thead>
                     <tbody id="elaboradoRankingBody"><tr><td colspan="6">Cargando...</td></tr>
-                    </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- FILTROS -->
         <div class="card">
             <h2>🔍 Buscar y Filtrar</h2>
             <div class="filters-grid">
-                <div class="filter-group"><label>📅 Mes</label>
-                    <select id="filterMes"><option value="">Todos</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select>
-                </div>
-                <div class="filter-group"><label>🏫 Nivel</label>
-                    <select id="filterNivel">
-                        <option value="">Todos</option>
-                        <option value="Bachillerato Salitrillo">Bachillerato Salitrillo</option>
-                        <option value="Centro Universitario Los Ángeles">Centro Universitario Los Ángeles</option>
-                        <option value="Preescolar Centro">Preescolar Centro</option>
-                        <option value="Preescolar San Miguel">Preescolar San Miguel</option>
-                        <option value="Prepa CUA">Prepa CUA</option>
-                        <option value="Primaria Centro">Primaria Centro</option>
-                        <option value="Primaria San Miguel">Primaria San Miguel</option>
-                        <option value="Secundaria Centro">Secundaria Centro</option>
-                        <option value="Secundaria Salitrillo">Secundaria Salitrillo</option>
-                        <option value="Secundaria San Miguel">Secundaria San Miguel</option>
-                        <option value="Universidad Los Ángeles">Universidad Los Ángeles</option>
-                        <option value="Plantel Centro">Plantel Centro</option>
-                        <option value="Plantel Salitrillo">Plantel Salitrillo</option>
-                        <option value="Plantel San Miguel">Plantel San Miguel</option>
-                    </select>
-                </div>
-                <div class="filter-group"><label>👤 Responsable</label>
-                    <select id="filterResponsable"><option value="">Todos</option></select>
-                </div>
+                <div class="filter-group"><label>📅 Mes</label><select id="filterMes"><option value="">Todos</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></div>
+                <div class="filter-group"><label>🏫 Nivel</label><select id="filterNivel"><option value="">Todos</option><option value="Bachillerato Salitrillo">Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">Centro Universitario Los Ángeles</option><option value="Preescolar Centro">Preescolar Centro</option><option value="Preescolar San Miguel">Preescolar San Miguel</option><option value="Prepa CUA">Prepa CUA</option><option value="Primaria Centro">Primaria Centro</option><option value="Primaria San Miguel">Primaria San Miguel</option><option value="Secundaria Centro">Secundaria Centro</option><option value="Secundaria Salitrillo">Secundaria Salitrillo</option><option value="Secundaria San Miguel">Secundaria San Miguel</option><option value="Universidad Los Ángeles">Universidad Los Ángeles</option><option value="Plantel Centro">Plantel Centro</option><option value="Plantel Salitrillo">Plantel Salitrillo</option><option value="Plantel San Miguel">Plantel San Miguel</option></select></div>
+                <div class="filter-group"><label>👤 Responsable</label><select id="filterResponsable"><option value="">Todos</option></select></div>
                 <div class="filter-group"><label>⭐ Prioridad</label><select id="filterPrioridad"><option value="">Todas</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option><option value="Programar">Programar</option></select></div>
                 <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option></select></div>
                 <div class="filter-group"><label>📢 Publicado</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí</option><option value="No">No</option></select></div>
@@ -573,16 +554,24 @@
             </div>
         </div>
 
-        <!-- RESULTADOS -->
         <div class="card">
             <h2>📋 Resultados (<span id="resultCount">0</span>)</h2>
             <div class="results-table">
                 <table style="width:100%">
                     <thead>
-                        <tr><th>Contenido</th><th>Fecha Registro</th><th>Fecha Prog.</th><th>Nivel</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Publicado</th><th>Acciones</th></tr>
+                        <tr>
+                            <th>Contenido</th>
+                            <th>📅 Fecha Registro</th>
+                            <th>Fecha Programación</th>
+                            <th>Nivel</th>
+                            <th>Responsable</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Publicado</th>
+                            <th>Acciones</th>
+                        </tr>
                     </thead>
                     <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr>
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -590,448 +579,502 @@
 
     <button class="fab" id="openModalBtn">➕</button>
 
-    <!-- MODAL PARA NUEVO/EDITAR CONTENIDO -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div>
-            <div class="modal-body">
-                <div id="modalAlert" class="alert"></div>
-                <div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div>
-                <form id="contentForm">
-                    <input type="hidden" id="editId" value="">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div>
-                        <div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div>
-                        <div class="form-group"><label class="required">✅ Estado / Revisión</label>
-                            <select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select>
-                        </div>
-                        <div class="form-group"><label class="required">⭐ Prioridad</label>
-                            <select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select>
-                        </div>
-                        <div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div>
-                        <div class="form-group"><label>📢 ¿Publicado?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div>
-                        <div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option></select></div>
-                        <div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button></div></div>
-                        <div class="form-group"><label class="required">🏫 Nivel</label>
-                            <select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select>
-                        </div>
-                        <div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div>
-                        <div class="form-group"><label class="required">✍️ Elaborado por</label>
-                            <select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select>
-                        </div>
-                        <div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div>
-                        <div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div>
-                        <div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div>
-                    </div>
-                    <button type="submit" class="btn-submit">💾 Guardar contenido</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA CAMBIAR ESTADO RÁPIDO -->
-    <div id="estadoModal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header"><h2>📝 Cambiar Estado</h2><button class="modal-close" id="closeEstadoModalBtn">&times;</button></div>
-            <div class="modal-body">
-                <div id="estadoModalAlert" class="alert"></div>
-                <p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p>
-                <div class="form-group" style="margin-top: 15px;"><label>✅ Selecciona nuevo estado:</label><select id="nuevoEstado" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;"><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div>
-                <div class="form-group" style="margin-top: 15px;"><label>📢 ¿Publicado?</label><select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px; border:2px solid #e0e0e0;"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div>
-                <button class="btn-submit" onclick="guardarCambioEstado()" style="margin-top: 15px;">💾 Guardar cambios</button>
-            </div>
-        </div>
-    </div>
+    <!-- MODALES -->
+    <div id="eventModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-body"><div id="modalAlert" class="alert"></div><div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div><form id="contentForm"><input type="hidden" id="editId" value=""><div class="form-grid"><div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div><div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div><div class="form-group"><label class="required">✅ Estado / Revisión</label><select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><div class="form-group"><label class="required">⭐ Prioridad</label><select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select></div><div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div><div class="form-group"><label>📢 ¿Publicado?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div><div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option></select></div><div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button></div></div><div class="form-group"><label class="required">🏫 Nivel</label><select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select></div><div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div><div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div><div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div><div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div><div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div></div><button type="submit" class="btn-submit">💾 Guardar contenido</button></form></div></div></div>
+    <div id="estadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📝 Cambiar Estado</h2><button class="modal-close" id="closeEstadoModalBtn">&times;</button></div><div class="modal-body"><div id="estadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p><div class="form-group"><label>✅ Selecciona nuevo estado:</label><select id="nuevoEstado" style="width:100%; padding:10px; border-radius:8px;"><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><button class="btn-submit" onclick="guardarCambioEstado()">💾 Guardar cambios</button></div></div></div>
+    <div id="publicadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📢 Cambiar Publicación</h2><button class="modal-close" id="closePublicadoModalBtn">&times;</button></div><div class="modal-body"><div id="publicadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="publicadoContenidoTitulo"></span></p><div class="form-group"><label>📢 ¿Publicado?</label><select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px;"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div><button class="btn-submit" onclick="guardarCambioPublicado()">💾 Guardar cambios</button></div></div></div>
+    <div id="prioridadModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>⭐ Cambiar Prioridad</h2><button class="modal-close" id="closePrioridadModalBtn">&times;</button></div><div class="modal-body"><div id="prioridadModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="prioridadContenidoTitulo"></span></p><div class="form-group"><label>⭐ Selecciona nueva prioridad:</label><select id="nuevoPrioridad" style="width:100%; padding:10px; border-radius:8px;" onchange="togglePrioridadFecha()"><option value="Baja">🟢 Baja</option><option value="Media">🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 Programar</option></select></div><div id="prioridadDateField" style="display:none; margin-top:15px;"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="nuevoFechaProgramacion" style="width:100%; padding:10px; border-radius:8px;"></div></div><button class="btn-submit" onclick="guardarCambioPrioridad()">💾 Guardar cambios</button></div></div></div>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzpX8X_NGz1WUive6d6LjDQakdvZ6OENZnabljRPdhpx1nHHW9mCdoZInGrtszuWwj/exec';
-        
         let allData = [];
         let charts = {};
-        let estadoActualId = null;
+        let estadoActualId = null, publicadoActualId = null, prioridadActualId = null;
 
-        // ============================================
-        // LISTA DE RESPONSABLES
-        // ============================================
-        const responsablesList = [
-            "COMUNICACION", "MISS ANGELICA", "MISS AURORA", "MISS BERE", "MISS ELENA",
-            "MISS JAZMIN", "MISS JAZMIN ORTIZ", "MISS JESYCA", "MISS LETY", "MISS LOLITA",
-            "MISS LUCY", "MISS MALE", "MISS MAYTE", "MISS MONICA", "MISS NIDIA",
-            "MISS OLGA", "MISS ROSARIO", "MISS SOL", "MISS TATIANA", "MTRO. HUMBERTO",
-            "PROF. FERNANDO", "PROF. JESUS", "PROF. JOEL", "PROF. MIGUEL", "PROF. SAMUEL"
-        ];
-
-        function formatearFechaISO(fechaISO) {
-            if (!fechaISO || fechaISO === '-') return '-';
-            try {
-                const fecha = new Date(fechaISO);
-                if (isNaN(fecha.getTime())) return fechaISO;
-                const dia = fecha.getDate().toString().padStart(2, '0');
-                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-                const año = fecha.getFullYear();
-                let horas = fecha.getHours();
-                const minutos = fecha.getMinutes().toString().padStart(2, '0');
-                const ampm = horas >= 12 ? 'PM' : 'AM';
-                horas = horas % 12;
-                horas = horas ? horas : 12;
-                return `${dia}/${mes}/${año} ${horas}:${minutos} ${ampm}`;
-            } catch(e) { return fechaISO; }
-        }
-
-        function formatearSoloFecha(fechaISO) {
-            if (!fechaISO || fechaISO === '-' || fechaISO === 'undefined' || fechaISO === 'null') return '-';
-            try {
-                const fecha = new Date(fechaISO);
-                if (isNaN(fecha.getTime())) return fechaISO;
-                const dia = fecha.getDate().toString().padStart(2, '0');
-                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-                const año = fecha.getFullYear();
-                return `${dia}/${mes}/${año}`;
-            } catch(e) { return fechaISO; }
-        }
+        const responsablesList = ["COMUNICACION", "MISS ANGELICA", "MISS AURORA", "MISS BERE", "MISS ELENA", "MISS JAZMIN", "MISS JAZMIN ORTIZ", "MISS JESYCA", "MISS LETY", "MISS LOLITA", "MISS LUCY", "MISS MALE", "MISS MAYTE", "MISS MONICA", "MISS NIDIA", "MISS OLGA", "MISS ROSARIO", "MISS SOL", "MISS TATIANA", "MTRO. HUMBERTO", "PROF. FERNANDO", "PROF. JESUS", "PROF. JOEL", "PROF. MIGUEL", "PROF. SAMUEL"];
 
         function obtenerFechaYYYYMMDD(fechaISO) {
             if (!fechaISO) return null;
             try {
-                const fecha = new Date(fechaISO);
-                if (isNaN(fecha.getTime())) return null;
-                return fecha.toISOString().split('T')[0];
+                const f = new Date(fechaISO);
+                if (isNaN(f)) return null;
+                const year = f.getUTCFullYear();
+                const month = String(f.getUTCMonth() + 1).padStart(2, '0');
+                const day = String(f.getUTCDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             } catch(e) { return null; }
         }
 
-        function getToday() { let d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-
-        function mostrarToast(mensaje, color) {
-            const toastExistente = document.querySelector('.copy-feedback-toast');
-            if (toastExistente) toastExistente.remove();
-            const toast = document.createElement('div');
-            toast.className = 'copy-feedback-toast';
-            toast.textContent = mensaje;
-            toast.style.background = color;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
-        function copiarTexto(elementId, buttonElement) {
-            const elemento = document.getElementById(elementId);
-            let textoACopiar = elemento.tagName === 'TEXTAREA' || elemento.tagName === 'INPUT' ? elemento.value : elemento.textContent;
-            if (!textoACopiar || textoACopiar.trim() === '') { mostrarToast('⚠️ No hay contenido para copiar', '#ffc107'); return; }
-            navigator.clipboard.writeText(textoACopiar).then(() => {
-                const iconoOriginal = buttonElement.innerHTML;
-                buttonElement.innerHTML = '✅';
-                buttonElement.classList.add('copied');
-                mostrarToast('✅ Texto copiado correctamente', '#28a745');
-                setTimeout(() => { buttonElement.innerHTML = iconoOriginal; buttonElement.classList.remove('copied'); }, 1500);
-            }).catch(() => mostrarToast('❌ Error al copiar', '#dc3545'));
-        }
-
-        function abrirLink() {
-            const url = document.getElementById('link').value.trim();
-            if (!url) { mostrarToast('⚠️ No hay URL para abrir', '#ffc107'); return; }
-            let urlValida = url;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) urlValida = 'https://' + url;
-            try { window.open(urlValida, '_blank', 'noopener,noreferrer'); mostrarToast('🔗 Abriendo enlace...', '#28a745'); } 
-            catch(e) { mostrarToast('❌ No se pudo abrir el enlace', '#dc3545'); }
-        }
-
-        function llenarSelectResponsables() {
-            const filterSelect = document.getElementById('filterResponsable');
-            const formSelect = document.getElementById('responsable');
-            const optionsHtml = responsablesList.map(n => `<option value="${n}">${n}</option>`).join('');
-            filterSelect.innerHTML = '<option value="">Todos</option>' + optionsHtml;
-            formSelect.innerHTML = '<option value="">Seleccionar responsable...</option>' + optionsHtml;
-        }
-
-        async function guardarDatos(formData, esActualizacion = false) {
-            const btn = document.querySelector('#contentForm .btn-submit');
-            const alertDiv = document.getElementById('modalAlert');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading"></span> Guardando...';
+        function formatearFechaProgramacion(fechaISO) {
+            if (!fechaISO) return '-';
             try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-                alertDiv.className = 'alert success';
-                alertDiv.innerHTML = esActualizacion ? '✅ ¡Contenido actualizado!' : '✅ ¡Contenido guardado!';
-                setTimeout(() => { alertDiv.className = 'alert'; }, 3000);
-                if (!esActualizacion) { document.getElementById('contentForm').reset(); document.getElementById('fecha_prog').value = getToday(); document.getElementById('visualizaciones').value = '0'; document.getElementById('prioridad').value = 'Media'; document.getElementById('programarDateField').classList.remove('show'); }
-                setTimeout(() => { loadData(); modal.classList.remove('active'); estadoModal.classList.remove('active'); document.body.style.overflow = ''; }, 2000);
+                const f = new Date(fechaISO);
+                if (isNaN(f)) return fechaISO;
+                const year = f.getUTCFullYear();
+                const month = String(f.getUTCMonth() + 1).padStart(2, '0');
+                const day = String(f.getUTCDate()).padStart(2, '0');
+                return `${day}/${month}/${year}`;
+            } catch(e) { return fechaISO; }
+        }
+
+        function formatearFechaISO(fechaISO) {
+            if (!fechaISO) return '-';
+            try { 
+                const f = new Date(fechaISO); 
+                if(isNaN(f)) return fechaISO; 
+                return f.toLocaleString('es-MX'); 
+            } catch(e){ return fechaISO; }
+        }
+
+        function esFechaProxima(fechaISO) {
+            if (!fechaISO) return false;
+            try {
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const fechaComp = new Date(fechaISO);
+                fechaComp.setHours(0, 0, 0, 0);
+                return fechaComp >= hoy;
+            } catch(e) { return false; }
+        }
+
+        function getToday() { 
+            let d = new Date(); 
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; 
+        }
+        
+        function mostrarToast(m, c) { 
+            let t=document.querySelector('.copy-feedback-toast'); 
+            if(t) t.remove(); 
+            t=document.createElement('div'); 
+            t.className='copy-feedback-toast'; 
+            t.textContent=m; 
+            t.style.background=c; 
+            document.body.appendChild(t); 
+            setTimeout(()=>t.remove(),2000); 
+        }
+        
+        function copiarTexto(id,btn){ 
+            let el=document.getElementById(id), txt=el.tagName==='TEXTAREA'||el.tagName==='INPUT'?el.value:el.textContent; 
+            if(!txt.trim()){ mostrarToast('⚠️ Sin contenido','#ffc107'); return; } 
+            navigator.clipboard.writeText(txt).then(()=>{ 
+                let orig=btn.innerHTML; 
+                btn.innerHTML='✅'; 
+                btn.classList.add('copied'); 
+                mostrarToast('✅ Copiado','#28a745'); 
+                setTimeout(()=>{ btn.innerHTML=orig; btn.classList.remove('copied'); },1500); 
+            }).catch(()=>mostrarToast('❌ Error','#dc3545')); 
+        }
+        
+        function abrirLink(){ 
+            let url=document.getElementById('link').value.trim(); 
+            if(!url){ mostrarToast('⚠️ Sin URL','#ffc107'); return; } 
+            if(!url.startsWith('http')) url='https://'+url; 
+            try{ window.open(url,'_blank'); mostrarToast('🔗 Abriendo','#28a745'); } 
+            catch(e){ mostrarToast('❌ Error','#dc3545'); } 
+        }
+        
+        function llenarSelectResponsables(){ 
+            let html=responsablesList.map(n=>`<option value="${n}">${n}</option>`).join(''); 
+            document.getElementById('filterResponsable').innerHTML='<option value="">Todos</option>'+html; 
+            document.getElementById('responsable').innerHTML='<option value="">Seleccionar...</option>'+html; 
+        }
+        
+        async function guardarDatos(formData, esActualizacion){
+            let btn=document.querySelector('#contentForm .btn-submit'), alertDiv=document.getElementById('modalAlert');
+            btn.disabled=true; btn.innerHTML='<span class="loading"></span> Guardando...';
+            try{
+                await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(formData)});
+                alertDiv.className='alert success'; alertDiv.innerHTML=esActualizacion?'✅ Actualizado':'✅ Guardado';
+                setTimeout(()=>alertDiv.className='alert',3000);
+                if(!esActualizacion){ 
+                    document.getElementById('contentForm').reset(); 
+                    document.getElementById('fecha_prog').value=getToday(); 
+                    document.getElementById('visualizaciones').value='0'; 
+                    document.getElementById('prioridad').value='Media'; 
+                    document.getElementById('programarDateField').classList.remove('show'); 
+                }
+                setTimeout(()=>{ 
+                    loadData(); 
+                    modal.classList.remove('active'); 
+                    estadoModal.classList.remove('active'); 
+                    publicadoModal.classList.remove('active'); 
+                    prioridadModal.classList.remove('active'); 
+                    document.body.style.overflow=''; 
+                },2000);
+            } catch(e){ 
+                alertDiv.className='alert error'; 
+                alertDiv.innerHTML='❌ Error'; 
+                setTimeout(()=>alertDiv.className='alert',3000); 
+            }
+            finally{ 
+                btn.disabled=false; 
+                btn.innerHTML='💾 Guardar contenido'; 
+            }
+        }
+        
+        function actualizarTimestamp(){ 
+            document.getElementById('systemTimestamp').innerHTML=`🕐 Fecha y hora del sistema: ${new Date().toLocaleString('es-MX')}`; 
+        }
+        
+        function actualizarPublicacionesHoy(){ 
+            let hoy=getToday(), pubs=allData.filter(i=>obtenerFechaYYYYMMDD(i.FECHA_PROG)===hoy); 
+            document.getElementById('publicacionesHoy').innerHTML=pubs.length; 
+            document.getElementById('todayPostsList').innerHTML=pubs.length? pubs.map(i=>`<div class="today-post-item"><span class="today-post-title">📄 ${i.CONTENIDO_CORTO||'Sin título'}</span><span class="today-post-responsable">👤 ${i.RESPONSABLE||'N/A'}</span></div>`).join(''):'<div style="text-align:center;opacity:0.8;">📭 No hay publicaciones para hoy</div>'; 
+        }
+        
+        function actualizarColaboradorEstrella(){ 
+            let stats={}; 
+            allData.forEach(i=>{ let e=i.ELABORADO_POR; if(e) stats[e]=(stats[e]||0)+1; }); 
+            let maxNom="---", maxCant=0; 
+            Object.entries(stats).forEach(([n,c])=>{ if(c>maxCant){ maxCant=c; maxNom=n; } }); 
+            document.getElementById('colaboradorEstrella').innerHTML=maxNom; 
+            document.getElementById('estrellaContenidos').innerHTML=maxCant?`${maxCant} contenidos`:"0 contenidos"; 
+        }
+        
+        function actualizarRankingElaboradoPor(){ 
+            let stats={}; 
+            allData.forEach(i=>{ 
+                let e=i.ELABORADO_POR; 
+                if(e){ 
+                    if(!stats[e]) stats[e]={total:0,publicados:0,pendientes:0}; 
+                    stats[e].total++; 
+                    if(i.PUBLICADO==='Sí') stats[e].publicados++; 
+                    else stats[e].pendientes++; 
+                } 
+            }); 
+            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total-a.total); 
+            document.getElementById('elaboradoRankingBody').innerHTML=ranking.length? ranking.map((r,idx)=>`<tr><td>✍️ ${r.nombre}</td><td><strong>${r.total}</strong></td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td><td>${idx===0?'⭐👑':idx===1?'🥈':idx===2?'🥉':''}</td></tr>`).join(''):'<tr><td colspan="6">Sin datos</td></tr>'; 
+            actualizarColaboradorEstrella(); 
+        }
+        
+        function actualizarGraficos(){ 
+            let meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'], mensual=Array(12).fill(0); 
+            allData.forEach(r=>{ 
+                let fp=obtenerFechaYYYYMMDD(r.FECHA_PROG); 
+                if(fp){ 
+                    let m=parseInt(fp.split('-')[1])-1; 
+                    if(m>=0) mensual[m]++; 
+                } 
+            }); 
+            if(charts.mensual) charts.mensual.destroy(); 
+            charts.mensual=new Chart(document.getElementById('chartMensual'),{type:'bar',data:{labels:meses,datasets:[{label:'Publicaciones',data:mensual,backgroundColor:'#1e3c72'}]}}); 
+            
+            let respCount={}; 
+            allData.forEach(r=>{ if(r.RESPONSABLE) respCount[r.RESPONSABLE]=(respCount[r.RESPONSABLE]||0)+1; }); 
+            let topResp=Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5); 
+            if(charts.ranking) charts.ranking.destroy(); 
+            charts.ranking=new Chart(document.getElementById('chartRanking'),{type:'bar',data:{labels:topResp.map(r=>r[0]),datasets:[{label:'Contenidos',data:topResp.map(r=>r[1]),backgroundColor:'#2a5298'}]}}); 
+            
+            let prioridad={Alta:0,Media:0,Baja:0,Programar:0}; 
+            allData.forEach(r=>{ if(r.PRIORIDAD) prioridad[r.PRIORIDAD]++; }); 
+            if(charts.prioridad) charts.prioridad.destroy(); 
+            charts.prioridad=new Chart(document.getElementById('chartPrioridadDist'),{type:'doughnut',data:{labels:['Alta','Media','Baja','Programar'],datasets:[{data:[prioridad.Alta,prioridad.Media,prioridad.Baja,prioridad.Programar],backgroundColor:['#dc3545','#ffc107','#28a745','#6c757d']}]}}); 
+            
+            let estados={LISTO:0,PENDIENTE:0,'EN REVISIÓN':0,CORREGIR:0}; 
+            allData.forEach(r=>{ if(r.REVISION && estados[r.REVISION]!==undefined) estados[r.REVISION]++; }); 
+            if(charts.estado) charts.estado.destroy(); 
+            charts.estado=new Chart(document.getElementById('chartEstadoDist'),{type:'pie',data:{labels:Object.keys(estados),datasets:[{data:Object.values(estados),backgroundColor:['#28a745','#ffc107','#17a2b8','#dc3545']}]}}); 
+        }
+        
+        function actualizarRanking(){ 
+            let stats={}; 
+            allData.forEach(r=>{ 
+                if(!r.RESPONSABLE) return; 
+                if(!stats[r.RESPONSABLE]) stats[r.RESPONSABLE]={total:0,publicados:0,pendientes:0}; 
+                stats[r.RESPONSABLE].total++; 
+                if(r.PUBLICADO==='Sí') stats[r.RESPONSABLE].publicados++; 
+                else stats[r.RESPONSABLE].pendientes++; 
+            }); 
+            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.eficiencia-a.eficiencia); 
+            document.getElementById('rankingTableBody').innerHTML=ranking.length? ranking.map(r=>`<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join(''):'<tr><td colspan="5">Sin datos</td></tr>'; 
+        }
+        
+        function actualizarDashboard(){ 
+            let total=allData.length, publicados=allData.filter(r=>r.PUBLICADO==='Sí').length, noPublicados=total-publicados, programados=allData.filter(r=>r.PRIORIDAD==='Programar').length; 
+            document.getElementById('tasaPublicacion').innerHTML=total?((publicados/total)*100).toFixed(1)+'%':'0%'; 
+            document.getElementById('totalPublicaciones').innerHTML=total; 
+            document.getElementById('pubPublicadas').innerHTML=publicados;
+            document.getElementById('pubNoPublicadas').innerHTML=noPublicados;
+            document.getElementById('eficienciaEquipo').innerHTML=total?((publicados/total)*100).toFixed(1)+'%':'0%'; 
+            document.getElementById('contenidosProgramados').innerHTML=programados; 
+            actualizarGraficos(); 
+            actualizarRanking(); 
+            actualizarRankingElaboradoPor(); 
+        }
+        
+        // Función para parsear fecha de registro correctamente (formato: "dd/mm/yyyy, hh:mm:ss")
+        function parsearFechaRegistro(fechaStr) {
+            if (!fechaStr || fechaStr === '-') return new Date(0);
+            try {
+                // El formato viene como "31/12/2025, 14:30:00" desde toLocaleString('es-MX')
+                let partes = fechaStr.split(', ');
+                if (partes.length !== 2) return new Date(fechaStr);
+                let fechaParte = partes[0].split('/');
+                if (fechaParte.length !== 3) return new Date(fechaStr);
+                let horaParte = partes[1].split(':');
+                if (horaParte.length < 2) return new Date(fechaStr);
+                let dia = parseInt(fechaParte[0]);
+                let mes = parseInt(fechaParte[1]) - 1;
+                let anio = parseInt(fechaParte[2]);
+                let horas = parseInt(horaParte[0]);
+                let minutos = parseInt(horaParte[1]);
+                let segundos = horaParte.length > 2 ? parseInt(horaParte[2]) : 0;
+                let fecha = new Date(anio, mes, dia, horas, minutos, segundos);
+                return isNaN(fecha.getTime()) ? new Date(0) : fecha;
             } catch(e) {
-                console.error('Error al guardar:', e);
-                alertDiv.className = 'alert error';
-                alertDiv.innerHTML = '❌ Error al guardar. Intenta de nuevo.';
-                setTimeout(() => { alertDiv.className = 'alert'; }, 3000);
-            } finally { btn.disabled = false; btn.innerHTML = '💾 Guardar contenido'; }
-        }
-
-        function actualizarTimestamp() {
-            const ahora = new Date();
-            const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            document.getElementById('systemTimestamp').innerHTML = `🕐 Fecha y hora del sistema: ${ahora.toLocaleString('es-MX', opciones)}`;
-        }
-
-        function actualizarPublicacionesHoy() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const publicacionesHoy = allData.filter(item => obtenerFechaYYYYMMDD(item.FECHA_PROG) === hoy);
-            const cantidad = publicacionesHoy.length;
-            document.getElementById('publicacionesHoy').innerHTML = cantidad;
-            const container = document.getElementById('todayPostsList');
-            if (cantidad === 0) container.innerHTML = '<div style="text-align: center; opacity: 0.8;">📭 No hay publicaciones programadas para hoy</div>';
-            else container.innerHTML = publicacionesHoy.map(item => `<div class="today-post-item"><span class="today-post-title" title="${item.CONTENIDO_CORTO || ''}">📄 ${item.CONTENIDO_CORTO || 'Sin título'}</span><span class="today-post-responsable">👤 ${item.RESPONSABLE || 'N/A'}</span></div>`).join('');
-        }
-
-        // ACTUALIZAR COLABORADOR ESTRELLA (el que más contenidos tiene)
-        function actualizarColaboradorEstrella() {
-            const elaboradoStats = {};
-            allData.forEach(item => {
-                const elaborado = item.ELABORADO_POR;
-                if (!elaborado) return;
-                elaboradoStats[elaborado] = (elaboradoStats[elaborado] || 0) + 1;
-            });
-            let maxNombre = "---";
-            let maxCantidad = 0;
-            for (const [nombre, cantidad] of Object.entries(elaboradoStats)) {
-                if (cantidad > maxCantidad) { maxCantidad = cantidad; maxNombre = nombre; }
+                return new Date(0);
             }
-            document.getElementById('colaboradorEstrella').innerHTML = maxNombre !== "---" ? maxNombre : "Sin datos";
-            document.getElementById('estrellaContenidos').innerHTML = maxCantidad > 0 ? `${maxCantidad} contenidos` : "0 contenidos";
         }
-
-        // RANKING POR ELABORADO POR - ordenado por total de contenidos (mayor a menor)
-        function actualizarRankingElaboradoPor() {
-            const elaboradoStats = {};
-            allData.forEach(item => {
-                const elaborado = item.ELABORADO_POR;
-                if (!elaborado) return;
-                if (!elaboradoStats[elaborado]) elaboradoStats[elaborado] = { total: 0, publicados: 0, pendientes: 0 };
-                elaboradoStats[elaborado].total++;
-                if (item.PUBLICADO === 'Sí') elaboradoStats[elaborado].publicados++;
-                else elaboradoStats[elaborado].pendientes++;
-            });
-            // Ordenar por total de contenidos (mayor a menor)
-            const ranking = Object.entries(elaboradoStats).map(([nombre, stats]) => ({
-                nombre, total: stats.total, publicados: stats.publicados, pendientes: stats.pendientes,
-                eficiencia: stats.total === 0 ? 0 : ((stats.publicados / stats.total) * 100).toFixed(1)
-            })).sort((a, b) => b.total - a.total);
-            
-            const tbody = document.getElementById('elaboradoRankingBody');
-            if (ranking.length === 0) tbody.innerHTML = '<tr><td colspan="6">Sin datos</td></tr>';
-            else {
-                tbody.innerHTML = ranking.map((r, idx) => `
-                    <tr>
-                        <td>✍️ ${r.nombre}</td>
-                        <td><strong>${r.total}</strong></td>
-                        <td>${r.publicados}</td>
-                        <td>${r.pendientes}</td>
-                        <td><span class="badge ${r.eficiencia >= 70 ? 'published' : 'pending'}">${r.eficiencia}%</span></td>
-                        <td>${idx === 0 ? '⭐👑' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : ''))}</td>
-                    </tr>
-                `).join('');
-            }
-            actualizarColaboradorEstrella(); // Actualizar la tarjeta estrella
+        
+        function filtrarDatos(){ 
+            let mes=document.getElementById('filterMes').value, nivel=document.getElementById('filterNivel').value, responsable=document.getElementById('filterResponsable').value, prioridad=document.getElementById('filterPrioridad').value, estado=document.getElementById('filterEstado').value, publicado=document.getElementById('filterPublicado').value; 
+            return allData.filter(i=>{ 
+                if(mes && i.FECHA_PROG){ 
+                    let fp=obtenerFechaYYYYMMDD(i.FECHA_PROG); 
+                    if(fp && fp.split('-')[1]!==mes) return false; 
+                    else if(!fp) return false; 
+                } 
+                if(nivel && i.NIVEL!==nivel) return false; 
+                if(responsable && i.RESPONSABLE!==responsable) return false; 
+                if(prioridad && i.PRIORIDAD!==prioridad) return false; 
+                if(estado && i.REVISION!==estado) return false; 
+                if(publicado && i.PUBLICADO!==publicado) return false; 
+                return true; 
+            }); 
         }
-
-        function actualizarGraficos() {
-            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-            const mensual = Array(12).fill(0);
-            allData.forEach(r => { if(r.FECHA_PROG) { const fechaProg = obtenerFechaYYYYMMDD(r.FECHA_PROG); if(fechaProg) { let m = parseInt(fechaProg.split('-')[1]) - 1; if(m >= 0) mensual[m]++; } } });
-            if(charts.mensual) charts.mensual.destroy();
-            charts.mensual = new Chart(document.getElementById('chartMensual'), { type:'bar', data:{ labels:meses, datasets:[{ label:'Publicaciones', data:mensual, backgroundColor:'#1e3c72' }] } });
-            
-            const respCount = {};
-            allData.forEach(r => { if(r.RESPONSABLE) respCount[r.RESPONSABLE] = (respCount[r.RESPONSABLE]||0)+1; });
-            const topResp = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
-            if(charts.ranking) charts.ranking.destroy();
-            charts.ranking = new Chart(document.getElementById('chartRanking'), { type:'bar', data:{ labels:topResp.map(r=>r[0]), datasets:[{ label:'Contenidos', data:topResp.map(r=>r[1]), backgroundColor:'#2a5298' }] } });
-            
-            const prioridad = { Alta:0, Media:0, Baja:0, Programar:0 };
-            allData.forEach(r => { if(r.PRIORIDAD) prioridad[r.PRIORIDAD] = (prioridad[r.PRIORIDAD]||0) + 1; });
-            if(charts.prioridad) charts.prioridad.destroy();
-            charts.prioridad = new Chart(document.getElementById('chartPrioridadDist'), { type:'doughnut', data:{ labels:['Alta','Media','Baja','Programar'], datasets:[{ data:[prioridad.Alta, prioridad.Media, prioridad.Baja, prioridad.Programar], backgroundColor:['#dc3545','#ffc107','#28a745','#6c757d'] }] } });
-            
-            const estados = { LISTO:0, PENDIENTE:0, 'EN REVISIÓN':0, CORREGIR:0 };
-            allData.forEach(r => { if(r.REVISION && estados[r.REVISION]!==undefined) estados[r.REVISION]++; });
-            if(charts.estado) charts.estado.destroy();
-            charts.estado = new Chart(document.getElementById('chartEstadoDist'), { type:'pie', data:{ labels:Object.keys(estados), datasets:[{ data:Object.values(estados), backgroundColor:['#28a745','#ffc107','#17a2b8','#dc3545'] }] } });
-        }
-
-        function actualizarRanking() {
-            const respStats = {};
-            allData.forEach(r => { if(!r.RESPONSABLE) return; if(!respStats[r.RESPONSABLE]) respStats[r.RESPONSABLE] = { total:0, publicados:0, pendientes:0 }; respStats[r.RESPONSABLE].total++; if(r.PUBLICADO === 'Sí') respStats[r.RESPONSABLE].publicados++; else respStats[r.RESPONSABLE].pendientes++; });
-            const ranking = Object.entries(respStats).map(([nombre,stats])=>({ nombre, total:stats.total, publicados:stats.publicados, pendientes:stats.pendientes, eficiencia:stats.total===0?0:((stats.publicados/stats.total)*100).toFixed(1) })).sort((a,b)=>b.eficiencia - a.eficiencia);
-            const tbody = document.getElementById('rankingTableBody');
-            if(ranking.length===0) tbody.innerHTML='<td><td colspan="5">Sin datos</td></tr>';
-            else tbody.innerHTML = ranking.map(r => `<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join('');
-        }
-
-        function actualizarDashboard() {
-            const total = allData.length, publicados = allData.filter(r => r.PUBLICADO === 'Sí').length, programados = allData.filter(r => r.PRIORIDAD === 'Programar').length;
-            document.getElementById('tasaPublicacion').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
-            document.getElementById('eficienciaEquipo').innerHTML = total === 0 ? 0 : ((publicados/total)*100).toFixed(1) + '%';
-            document.getElementById('contenidosProgramados').innerHTML = programados;
-            document.getElementById('tiempoPromedio').innerHTML = "2.5";
-            actualizarGraficos(); actualizarRanking(); actualizarRankingElaboradoPor();
-        }
-
-        function filtrarDatos() {
-            const mes = document.getElementById('filterMes').value, nivel = document.getElementById('filterNivel').value, responsable = document.getElementById('filterResponsable').value;
-            const prioridad = document.getElementById('filterPrioridad').value, estado = document.getElementById('filterEstado').value, publicado = document.getElementById('filterPublicado').value;
-            return allData.filter(item => {
-                if(mes && item.FECHA_PROG) { const fechaProg = obtenerFechaYYYYMMDD(item.FECHA_PROG); if(fechaProg) { let m = fechaProg.split('-')[1]; if(m !== mes) return false; } else return false; }
-                if(nivel && item.NIVEL !== nivel) return false;
-                if(responsable && item.RESPONSABLE !== responsable) return false;
-                if(prioridad && item.PRIORIDAD !== prioridad) return false;
-                if(estado && item.REVISION !== estado) return false;
-                if(publicado && item.PUBLICADO !== publicado) return false;
-                return true;
-            });
-        }
-
-        function aplicarFiltros() {
+        
+        function aplicarFiltros(){ 
             let filtrados = filtrarDatos();
-            filtrados.sort((a, b) => {
-                const fechaA = a.FECHA_PROG ? new Date(a.FECHA_PROG) : new Date(0);
-                const fechaB = b.FECHA_PROG ? new Date(b.FECHA_PROG) : new Date(0);
-                return fechaB - fechaA;
+            
+            // Ordenar por FECHA_REGISTRO descendente (más reciente primero)
+            filtrados.sort((a,b)=>{ 
+                let fa = parsearFechaRegistro(a.FECHA_REGISTRO);
+                let fb = parsearFechaRegistro(b.FECHA_REGISTRO);
+                return fb - fa; // Más reciente primero
             });
-            document.getElementById('resultCount').innerHTML = filtrados.length;
-            const tbody = document.getElementById('resultsTableBody');
-            if(filtrados.length === 0) tbody.innerHTML = '<tr><td colspan="9">📭 Sin resultados</td></tr>';
-            else tbody.innerHTML = filtrados.map(item => `<tr><td><strong>${item.CONTENIDO_CORTO || '-'}</strong></td><td>${formatearFechaISO(item.FECHA_REGISTRO) || '-'}</td><td>${formatearSoloFecha(item.FECHA_PROG) || '-'}</td><td>${item.NIVEL || '-'}</td><td>${item.RESPONSABLE || '-'}</td><td><span class="badge editable ${item.PRIORIDAD === 'Alta' ? 'alta' : (item.PRIORIDAD === 'Media' ? 'media' : (item.PRIORIDAD === 'Programar' ? 'programar' : 'baja'))}" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')">${item.PRIORIDAD || 'Media'}</span></td><td><span class="badge editable pending" onclick="abrirModalEstado('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}', '${item.REVISION || 'PENDIENTE'}', '${item.PUBLICADO || 'No'}')">${item.REVISION || '-'}</span></td><td><span class="badge ${item.PUBLICADO === 'Sí' ? 'published' : 'pending'}">${item.PUBLICADO === 'Sí' ? '✅ Sí' : '❌ No'}</span></td><td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${item.ID_UNICO}', '${item.CONTENIDO_CORTO?.replace(/'/g, "\\'") || ''}')">🗑️ Eliminar</button></div></td></tr>`).join('');
+            
+            document.getElementById('resultCount').innerHTML=filtrados.length; 
+            document.getElementById('resultsTableBody').innerHTML=filtrados.length? filtrados.map(i=>{
+                let fechaProgramacion = i.FECHA_PROGRAMACION || i.FECHA_PROG;
+                let esProxima = esFechaProxima(fechaProgramacion);
+                let fechaProgClass = esProxima ? 'class="fecha-proxima"' : '';
+                let fechaProgTooltip = esProxima ? 'title="📅 Fecha próxima/actual"' : '';
+                
+                return `<tr>
+                    <td><strong>${i.CONTENIDO_CORTO||'-'}</strong></td>
+                    <td>${formatearFechaISO(i.FECHA_REGISTRO)}</td>
+                    <td ${fechaProgClass} ${fechaProgTooltip}>${formatearFechaProgramacion(fechaProgramacion)}</td>
+                    <td>${i.NIVEL||'-'}</td>
+                    <td>${i.RESPONSABLE||'-'}</td>
+                    <td><span class="badge editable ${i.PRIORIDAD==='Alta'?'alta':i.PRIORIDAD==='Media'?'media':i.PRIORIDAD==='Programar'?'programar':'baja'}" onclick="abrirModalPrioridad('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PRIORIDAD||'Media'}','${i.FECHA_PROGRAMACION||''}')">${i.PRIORIDAD||'Media'}</span></td>
+                    <td><span class="badge editable pending" onclick="abrirModalEstado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.REVISION||'PENDIENTE'}')">${i.REVISION||'-'}</span></td>
+                    <td><span class="badge editable ${i.PUBLICADO==='Sí'?'published':'pending'}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${i.PUBLICADO==='Sí'?'✅ Sí':'❌ No'}</span></td>
+                    <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
+                </tr>`;
+            }).join(''):'<tr><td colspan="9">📭 Sin resultados</td></tr>'; 
+        }
+        
+        function limpiarFiltros(){ 
+            ['filterMes','filterNivel','filterResponsable','filterPrioridad','filterEstado','filterPublicado'].forEach(id=>document.getElementById(id).value=''); 
+            aplicarFiltros(); 
+        }
+        
+        function exportarReporte(){ 
+            let filtrados = filtrarDatos();
+            // Ordenar descendente también para el CSV
+            filtrados.sort((a,b)=>{ 
+                let fa = parsearFechaRegistro(a.FECHA_REGISTRO);
+                let fb = parsearFechaRegistro(b.FECHA_REGISTRO);
+                return fb - fa;
+            });
+            if(!filtrados.length){ alert('No hay datos'); return; } 
+            let csv="Contenido,Fecha Registro,Fecha Programación,Nivel,Responsable,Prioridad,Estado,Publicado\n"; 
+            filtrados.forEach(i=>{ 
+                csv+=`"${i.CONTENIDO_CORTO||''}","${formatearFechaISO(i.FECHA_REGISTRO)}","${formatearFechaProgramacion(i.FECHA_PROGRAMACION||i.FECHA_PROG)}","${i.NIVEL||''}","${i.RESPONSABLE||''}","${i.PRIORIDAD||''}","${i.REVISION||''}","${i.PUBLICADO||''}"\n`; 
+            }); 
+            let blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}), link=document.createElement('a'); 
+            link.href=URL.createObjectURL(blob); 
+            link.download=`reporte_gela_${getToday()}.csv`; 
+            link.click(); 
+        }
+        
+        async function eliminarContenido(id,titulo){ 
+            if(confirm(`¿Eliminar "${titulo}"?`)){ 
+                await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({id:id,eliminar:true})}); 
+                alert('✅ Eliminado'); 
+                loadData(); 
+            } 
+        }
+        
+        function abrirModalEstado(id,titulo,estado){ 
+            estadoActualId=id; 
+            document.getElementById('estadoContenidoTitulo').innerHTML=titulo; 
+            document.getElementById('nuevoEstado').value=estado; 
+            estadoModal.classList.add('active'); 
+            document.body.style.overflow='hidden'; 
+        }
+        
+        function abrirModalPublicado(id,titulo,publicado){ 
+            publicadoActualId=id; 
+            document.getElementById('publicadoContenidoTitulo').innerHTML=titulo; 
+            document.getElementById('nuevoPublicado').value=publicado; 
+            publicadoModal.classList.add('active'); 
+            document.body.style.overflow='hidden'; 
+        }
+        
+        function abrirModalPrioridad(id,titulo,prioridadActual,fechaProgActual){ 
+            prioridadActualId=id; 
+            document.getElementById('prioridadContenidoTitulo').innerHTML=titulo; 
+            let sel=document.getElementById('nuevoPrioridad'); 
+            sel.value=prioridadActual; 
+            let dateField=document.getElementById('prioridadDateField'); 
+            let dateInput=document.getElementById('nuevoFechaProgramacion'); 
+            if(prioridadActual==='Programar'){ 
+                dateField.style.display='block'; 
+                if(fechaProgActual) dateInput.value=obtenerFechaYYYYMMDD(fechaProgActual); 
+                else dateInput.value=''; 
+            } else { 
+                dateField.style.display='none'; 
+                dateInput.value=''; 
+            } 
+            prioridadModal.classList.add('active'); 
+            document.body.style.overflow='hidden'; 
+        }
+        
+        function togglePrioridadFecha(){ 
+            let sel=document.getElementById('nuevoPrioridad'); 
+            let field=document.getElementById('prioridadDateField'); 
+            field.style.display=sel.value==='Programar'?'block':'none'; 
+        }
+        
+        async function guardarCambioEstado(){ 
+            let nuevoEstado=document.getElementById('nuevoEstado').value, item=allData.find(r=>r.ID_UNICO===estadoActualId); 
+            if(!item) return; 
+            let fd={id:estadoActualId,contenido_corto:item.CONTENIDO_CORTO,copy_completo:item.COPY_COMPLETO,fecha_prog:item.FECHA_PROG,revision:nuevoEstado,publicado:item.PUBLICADO,plataforma:item.PLATAFORMA||'',link:item.LINK||'',nivel:item.NIVEL,responsable:item.RESPONSABLE,elaborado_por:item.ELABORADO_POR,visualizaciones:item.VISUALIZACIONES||'0',prioridad:item.PRIORIDAD||'Media',observaciones:item.OBSERVACIONES||'',fecha_programacion:item.FECHA_PROGRAMACION||'',esActualizacion:true}; 
+            await guardarDatos(fd,true); 
+        }
+        
+        async function guardarCambioPublicado(){ 
+            let nuevoPublicado=document.getElementById('nuevoPublicado').value, item=allData.find(r=>r.ID_UNICO===publicadoActualId); 
+            if(!item) return; 
+            let fd={id:publicadoActualId,contenido_corto:item.CONTENIDO_CORTO,copy_completo:item.COPY_COMPLETO,fecha_prog:item.FECHA_PROG,revision:item.REVISION,publicado:nuevoPublicado,plataforma:item.PLATAFORMA||'',link:item.LINK||'',nivel:item.NIVEL,responsable:item.RESPONSABLE,elaborado_por:item.ELABORADO_POR,visualizaciones:item.VISUALIZACIONES||'0',prioridad:item.PRIORIDAD||'Media',observaciones:item.OBSERVACIONES||'',fecha_programacion:item.FECHA_PROGRAMACION||'',esActualizacion:true}; 
+            await guardarDatos(fd,true); 
+        }
+        
+        async function guardarCambioPrioridad(){ 
+            let nuevaPrioridad=document.getElementById('nuevoPrioridad').value, nuevaFechaProg=document.getElementById('nuevoFechaProgramacion').value, item=allData.find(r=>r.ID_UNICO===prioridadActualId); 
+            if(!item) return; 
+            if(nuevaPrioridad==='Programar' && !nuevaFechaProg){ 
+                document.getElementById('prioridadModalAlert').className='alert error'; 
+                document.getElementById('prioridadModalAlert').innerHTML='❌ Selecciona fecha de programación'; 
+                setTimeout(()=>document.getElementById('prioridadModalAlert').className='alert',3000); 
+                return; 
+            } 
+            let fd={id:prioridadActualId,contenido_corto:item.CONTENIDO_CORTO,copy_completo:item.COPY_COMPLETO,fecha_prog:item.FECHA_PROG,revision:item.REVISION,publicado:item.PUBLICADO,plataforma:item.PLATAFORMA||'',link:item.LINK||'',nivel:item.NIVEL,responsable:item.RESPONSABLE,elaborado_por:item.ELABORADO_POR,visualizaciones:item.VISUALIZACIONES||'0',prioridad:nuevaPrioridad,observaciones:item.OBSERVACIONES||'',fecha_programacion:nuevaPrioridad==='Programar'?nuevaFechaProg:'',esActualizacion:true}; 
+            await guardarDatos(fd,true); 
+        }
+        
+        async function loadData(){ 
+            try{ 
+                let res=await fetch(SCRIPT_URL), data=await res.json(); 
+                if(data.success && data.registros){ 
+                    allData=data.registros; 
+                    actualizarDashboard(); 
+                    aplicarFiltros(); 
+                    actualizarPublicacionesHoy(); 
+                } 
+            } catch(e){ 
+                console.error(e); 
+                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="9">⚠️ Error al cargar datos</td></tr>'; 
+            } 
         }
 
-        function limpiarFiltros() {
-            document.getElementById('filterMes').value = ''; document.getElementById('filterNivel').value = ''; document.getElementById('filterResponsable').value = '';
-            document.getElementById('filterPrioridad').value = ''; document.getElementById('filterEstado').value = ''; document.getElementById('filterPublicado').value = '';
-            aplicarFiltros();
-        }
-
-        function exportarReporte() {
-            const filtrados = filtrarDatos();
-            if(filtrados.length === 0) { alert('No hay datos'); return; }
-            let csv = "Contenido,Fecha Registro,Fecha Programada,Nivel,Responsable,Prioridad,Estado,Publicado\n";
-            filtrados.forEach(i => { csv += `"${i.CONTENIDO_CORTO || ''}","${formatearFechaISO(i.FECHA_REGISTRO) || ''}","${formatearSoloFecha(i.FECHA_PROG) || ''}","${i.NIVEL || ''}","${i.RESPONSABLE || ''}","${i.PRIORIDAD || ''}","${i.REVISION || ''}","${i.PUBLICADO || ''}"\n`; });
-            const blob = new Blob(["\uFEFF" + csv], {type:"text/csv"}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `reporte_gela_${getToday()}.csv`; link.click();
-        }
-
-        async function eliminarContenido(id, titulo) {
-            if (confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) {
-                const formData = { id: id, eliminar: true };
-                try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) }); alert('✅ Contenido eliminado'); loadData(); } 
-                catch(e) { alert('❌ Error al eliminar'); }
-            }
-        }
-
-        async function guardarCambioEstado() {
-            const nuevoEstado = document.getElementById('nuevoEstado').value;
-            const nuevoPublicado = document.getElementById('nuevoPublicado').value;
-            const item = allData.find(r => r.ID_UNICO === estadoActualId);
-            if (!item) return;
-            const formData = { id: estadoActualId, contenido_corto: item.CONTENIDO_CORTO, copy_completo: item.COPY_COMPLETO, fecha_prog: item.FECHA_PROG, revision: nuevoEstado, publicado: nuevoPublicado, plataforma: item.PLATAFORMA || '', link: item.LINK || '', nivel: item.NIVEL, responsable: item.RESPONSABLE, elaborado_por: item.ELABORADO_POR, visualizaciones: item.VISUALIZACIONES || '0', prioridad: item.PRIORIDAD || 'Media', observaciones: item.OBSERVACIONES || '', fecha_programacion: item.FECHA_PROGRAMACION || '', esActualizacion: true };
-            await guardarDatos(formData, true);
-        }
-
-        async function loadData() {
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                if (data.success && data.registros) { allData = data.registros; actualizarDashboard(); aplicarFiltros(); actualizarPublicacionesHoy(); console.log(`✅ Cargados ${allData.length} registros`); } 
-                else { console.warn("No se pudieron cargar datos:", data); }
-            } catch(e) { console.error('Error al cargar datos:', e); document.getElementById('resultsTableBody').innerHTML = '<tr><td colspan="9">⚠️ Error al cargar datos. Verifica la URL de Apps Script.</td></tr>'; }
-        }
-
-        // ============================================
-        // CONFIGURACIÓN DE MODALES Y EVENTOS
-        // ============================================
-        document.getElementById('fecha_prog').value = getToday();
-        setInterval(actualizarTimestamp, 1000);
+        document.getElementById('fecha_prog').value=getToday();
+        setInterval(actualizarTimestamp,1000);
         actualizarTimestamp();
-
-        const prioridadSelect = document.getElementById('prioridad');
-        const programarField = document.getElementById('programarDateField');
-        const fechaProgramacion = document.getElementById('fecha_programacion');
-        function toggleProgramarDate() {
-            if (prioridadSelect.value === 'Programar') { programarField.classList.add('show'); fechaProgramacion.required = true; if (!fechaProgramacion.value) { let d = new Date(); d.setDate(d.getDate() + 7); fechaProgramacion.value = d.toISOString().split('T')[0]; } } 
-            else { programarField.classList.remove('show'); fechaProgramacion.required = false; fechaProgramacion.value = ''; }
+        let prioridadSel=document.getElementById('prioridad'), progField=document.getElementById('programarDateField'), fechaProgInput=document.getElementById('fecha_programacion');
+        function toggleProgramarDate(){ 
+            if(prioridadSel.value==='Programar'){ 
+                progField.classList.add('show'); 
+                fechaProgInput.required=true; 
+                if(!fechaProgInput.value){ 
+                    let d=new Date(); 
+                    d.setDate(d.getDate()+7); 
+                    fechaProgInput.value=d.toISOString().split('T')[0]; 
+                } 
+            } else { 
+                progField.classList.remove('show'); 
+                fechaProgInput.required=false; 
+                fechaProgInput.value=''; 
+            } 
         }
-        prioridadSelect.addEventListener('change', toggleProgramarDate);
+        prioridadSel.addEventListener('change',toggleProgramarDate);
         toggleProgramarDate();
 
-        const modal = document.getElementById('eventModal');
-        const estadoModal = document.getElementById('estadoModal');
-        const openModalBtn = document.getElementById('openModalBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const closeEstadoModalBtn = document.getElementById('closeEstadoModalBtn');
-
-        function abrirModal(editItem = null) {
-            if (editItem) {
-                document.getElementById('modalTitle').innerHTML = '✏️ Editar contenido';
-                document.getElementById('editId').value = editItem.ID_UNICO || '';
-                document.getElementById('contenido_corto').value = editItem.CONTENIDO_CORTO || '';
-                document.getElementById('copy_completo').value = editItem.COPY_COMPLETO || '';
-                document.getElementById('fecha_prog').value = obtenerFechaYYYYMMDD(editItem.FECHA_PROG) || getToday();
-                document.getElementById('revision').value = editItem.REVISION || 'PENDIENTE';
-                document.getElementById('publicado').value = editItem.PUBLICADO || 'No';
-                document.getElementById('plataforma').value = editItem.PLATAFORMA || '';
-                document.getElementById('link').value = editItem.LINK || '';
-                document.getElementById('nivel').value = editItem.NIVEL || '';
-                document.getElementById('responsable').value = editItem.RESPONSABLE || '';
-                document.getElementById('elaborado_por').value = editItem.ELABORADO_POR || '';
-                document.getElementById('visualizaciones').value = editItem.VISUALIZACIONES || '0';
-                document.getElementById('prioridad').value = editItem.PRIORIDAD || 'Media';
-                document.getElementById('observaciones').value = editItem.OBSERVACIONES || '';
-                if (editItem.PRIORIDAD === 'Programar') { document.getElementById('fecha_programacion').value = editItem.FECHA_PROGRAMACION || ''; setTimeout(() => toggleProgramarDate(), 100); }
-            } else {
-                document.getElementById('modalTitle').innerHTML = '✏️ Nuevo contenido';
-                document.getElementById('editId').value = '';
-                document.getElementById('contentForm').reset();
-                document.getElementById('fecha_prog').value = getToday();
-                document.getElementById('publicado').value = 'No';
-                document.getElementById('prioridad').value = 'Media';
-                document.getElementById('visualizaciones').value = '0';
-                programarField.classList.remove('show');
-            }
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        let modal=document.getElementById('eventModal'), estadoModal=document.getElementById('estadoModal'), publicadoModal=document.getElementById('publicadoModal'), prioridadModal=document.getElementById('prioridadModal');
+        let openModalBtn=document.getElementById('openModalBtn'), closeModalBtn=document.getElementById('closeModalBtn'), closeEstadoBtn=document.getElementById('closeEstadoModalBtn'), closePublicadoBtn=document.getElementById('closePublicadoModalBtn'), closePrioridadBtn=document.getElementById('closePrioridadModalBtn');
+        
+        function abrirModal(edit=null){ 
+            if(edit){ 
+                document.getElementById('modalTitle').innerHTML='✏️ Editar contenido'; 
+                document.getElementById('editId').value=edit.ID_UNICO||''; 
+                document.getElementById('contenido_corto').value=edit.CONTENIDO_CORTO||''; 
+                document.getElementById('copy_completo').value=edit.COPY_COMPLETO||''; 
+                document.getElementById('fecha_prog').value=obtenerFechaYYYYMMDD(edit.FECHA_PROG)||getToday(); 
+                document.getElementById('revision').value=edit.REVISION||'PENDIENTE'; 
+                document.getElementById('publicado').value=edit.PUBLICADO||'No'; 
+                document.getElementById('plataforma').value=edit.PLATAFORMA||''; 
+                document.getElementById('link').value=edit.LINK||''; 
+                document.getElementById('nivel').value=edit.NIVEL||''; 
+                document.getElementById('responsable').value=edit.RESPONSABLE||''; 
+                document.getElementById('elaborado_por').value=edit.ELABORADO_POR||''; 
+                document.getElementById('visualizaciones').value=edit.VISUALIZACIONES||'0'; 
+                document.getElementById('prioridad').value=edit.PRIORIDAD||'Media'; 
+                document.getElementById('observaciones').value=edit.OBSERVACIONES||''; 
+                if(edit.PRIORIDAD==='Programar'){ 
+                    document.getElementById('fecha_programacion').value=edit.FECHA_PROGRAMACION||''; 
+                    setTimeout(toggleProgramarDate,100); 
+                } else toggleProgramarDate(); 
+            } else { 
+                document.getElementById('modalTitle').innerHTML='✏️ Nuevo contenido'; 
+                document.getElementById('editId').value=''; 
+                document.getElementById('contentForm').reset(); 
+                document.getElementById('fecha_prog').value=getToday(); 
+                document.getElementById('publicado').value='No'; 
+                document.getElementById('prioridad').value='Media'; 
+                document.getElementById('visualizaciones').value='0'; 
+                progField.classList.remove('show'); 
+            } 
+            modal.classList.add('active'); 
+            document.body.style.overflow='hidden'; 
         }
-
-        function abrirModalEstado(id, titulo, estadoActual, publicadoActual) {
-            estadoActualId = id;
-            document.getElementById('estadoContenidoTitulo').innerHTML = titulo;
-            document.getElementById('nuevoEstado').value = estadoActual || 'PENDIENTE';
-            document.getElementById('nuevoPublicado').value = publicadoActual || 'No';
-            estadoModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        openModalBtn.onclick = () => abrirModal();
-        closeModalBtn.onclick = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
-        modal.onclick = (e) => { if(e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = ''; } };
-        closeEstadoModalBtn.onclick = () => { estadoModal.classList.remove('active'); document.body.style.overflow = ''; };
-        estadoModal.onclick = (e) => { if(e.target === estadoModal) { estadoModal.classList.remove('active'); document.body.style.overflow = ''; } };
-
-        document.getElementById('contentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const editId = document.getElementById('editId').value;
-            const selectedPrioridad = document.getElementById('prioridad').value;
-            if (selectedPrioridad === 'Programar' && !fechaProgramacion.value) {
-                document.getElementById('modalAlert').className = 'alert error';
-                document.getElementById('modalAlert').innerHTML = '❌ Debes elegir una fecha de programación';
-                setTimeout(() => { document.getElementById('modalAlert').className = 'alert'; }, 3000);
-                return;
-            }
-            const formData = { id: editId || null, contenido_corto: document.getElementById('contenido_corto').value, copy_completo: document.getElementById('copy_completo').value, fecha_prog: document.getElementById('fecha_prog').value, fecha_registro: new Date().toLocaleString('es-MX'), revision: document.getElementById('revision').value, publicado: document.getElementById('publicado').value, plataforma: document.getElementById('plataforma').value, link: document.getElementById('link').value || '', nivel: document.getElementById('nivel').value, responsable: document.getElementById('responsable').value, elaborado_por: document.getElementById('elaborado_por').value, visualizaciones: document.getElementById('visualizaciones').value || '0', prioridad: selectedPrioridad, observaciones: document.getElementById('observaciones').value || '', fecha_programacion: selectedPrioridad === 'Programar' ? fechaProgramacion.value : '', esActualizacion: !!editId };
-            await guardarDatos(formData, !!editId);
+        
+        openModalBtn.onclick=()=>abrirModal();
+        closeModalBtn.onclick=()=>{ modal.classList.remove('active'); document.body.style.overflow=''; };
+        modal.onclick=(e)=>{ if(e.target===modal){ modal.classList.remove('active'); document.body.style.overflow=''; } };
+        closeEstadoBtn.onclick=()=>{ estadoModal.classList.remove('active'); document.body.style.overflow=''; };
+        estadoModal.onclick=(e)=>{ if(e.target===estadoModal){ estadoModal.classList.remove('active'); document.body.style.overflow=''; } };
+        closePublicadoBtn.onclick=()=>{ publicadoModal.classList.remove('active'); document.body.style.overflow=''; };
+        publicadoModal.onclick=(e)=>{ if(e.target===publicadoModal){ publicadoModal.classList.remove('active'); document.body.style.overflow=''; } };
+        closePrioridadBtn.onclick=()=>{ prioridadModal.classList.remove('active'); document.body.style.overflow=''; };
+        prioridadModal.onclick=(e)=>{ if(e.target===prioridadModal){ prioridadModal.classList.remove('active'); document.body.style.overflow=''; } };
+        
+        document.getElementById('contentForm').addEventListener('submit',async(e)=>{ 
+            e.preventDefault(); 
+            let editId=document.getElementById('editId').value, prioridad=document.getElementById('prioridad').value; 
+            if(prioridad==='Programar' && !fechaProgInput.value){ 
+                document.getElementById('modalAlert').className='alert error'; 
+                document.getElementById('modalAlert').innerHTML='❌ Debes elegir una fecha de programación'; 
+                setTimeout(()=>document.getElementById('modalAlert').className='alert',3000); 
+                return; 
+            } 
+            let fd={id:editId||null,contenido_corto:document.getElementById('contenido_corto').value,copy_completo:document.getElementById('copy_completo').value,fecha_prog:document.getElementById('fecha_prog').value,fecha_registro:new Date().toLocaleString('es-MX'),revision:document.getElementById('revision').value,publicado:document.getElementById('publicado').value,plataforma:document.getElementById('plataforma').value,link:document.getElementById('link').value||'',nivel:document.getElementById('nivel').value,responsable:document.getElementById('responsable').value,elaborado_por:document.getElementById('elaborado_por').value,visualizaciones:document.getElementById('visualizaciones').value||'0',prioridad:prioridad,observaciones:document.getElementById('observaciones').value||'',fecha_programacion:prioridad==='Programar'?fechaProgInput.value:'',esActualizacion:!!editId}; 
+            await guardarDatos(fd,!!editId); 
         });
-
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
+        
         llenarSelectResponsables();
         loadData();
-        setInterval(loadData, 30000);
-        console.log('🚀 GELA - Sistema iniciado correctamente');
+        setInterval(loadData,30000);
     </script>
 </body>
 </html>
