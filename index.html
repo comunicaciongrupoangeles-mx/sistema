@@ -562,13 +562,13 @@
                         <tr>
                             <th>Contenido</th>
                             <th>📅 Fecha Registro</th>
-                            <th>Fecha Programación</th>
-                            <th>Nivel</th>
-                            <th>Responsable</th>
-                            <th>Prioridad</th>
-                            <th>Estado</th>
-                            <th>Publicado</th>
-                            <th>Acciones</th>
+                            <th>📅 Fecha Programación</th>
+                            <th>🏫 Nivel</th>
+                            <th>👤 Responsable</th>
+                            <th>⭐ Prioridad</th>
+                            <th>✅ Estado</th>
+                            <th>📢 Publicado</th>
+                            <th>⚙️ Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr>
@@ -785,8 +785,9 @@
                 if(r.PUBLICADO==='Sí') stats[r.RESPONSABLE].publicados++; 
                 else stats[r.RESPONSABLE].pendientes++; 
             }); 
-            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total-a.total); 
-            document.getElementById('rankingTableBody').innerHTML=ranking.length? ranking.map(r=>`<tr><td>${r.nombre}</td><td>${r.total}</td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join(''):'<tr><td colspan="5">Sin datos</td></tr>'; 
+            // ORDENADO POR TOTAL DE MAYOR A MENOR (descendente)
+            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total - a.total);
+            document.getElementById('rankingTableBody').innerHTML=ranking.length? ranking.map(r=>`<tr><td>${r.nombre}</td><td><strong>${r.total}</strong></td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join(''):'<tr><td colspan="5">Sin datos</td></tr>'; 
         }
         
         function actualizarDashboard(){ 
