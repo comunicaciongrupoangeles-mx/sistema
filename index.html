@@ -531,7 +531,7 @@
             <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por"</h3>
             <div class="ranking-table">
                 <table style="width:100%">
-                    <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr></thead>
+                    <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th> </thead>
                     <tbody id="elaboradoRankingBody"><tr><td colspan="6">Cargando...</td></tr>
                 </table>
             </div>
@@ -543,6 +543,7 @@
                 <div class="filter-group"><label>📅 Mes</label><select id="filterMes"><option value="">Todos</option><option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option><option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option><option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option><option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option></select></div>
                 <div class="filter-group"><label>🏫 Nivel</label><select id="filterNivel"><option value="">Todos</option><option value="Bachillerato Salitrillo">Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">Centro Universitario Los Ángeles</option><option value="Preescolar Centro">Preescolar Centro</option><option value="Preescolar San Miguel">Preescolar San Miguel</option><option value="Prepa CUA">Prepa CUA</option><option value="Primaria Centro">Primaria Centro</option><option value="Primaria San Miguel">Primaria San Miguel</option><option value="Secundaria Centro">Secundaria Centro</option><option value="Secundaria Salitrillo">Secundaria Salitrillo</option><option value="Secundaria San Miguel">Secundaria San Miguel</option><option value="Universidad Los Ángeles">Universidad Los Ángeles</option><option value="Plantel Centro">Plantel Centro</option><option value="Plantel Salitrillo">Plantel Salitrillo</option><option value="Plantel San Miguel">Plantel San Miguel</option></select></div>
                 <div class="filter-group"><label>👤 Responsable</label><select id="filterResponsable"><option value="">Todos</option></select></div>
+                <div class="filter-group"><label>✍️ Elaborado por</label><select id="filterElaboradoPor"><option value="">Todos</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div>
                 <div class="filter-group"><label>⭐ Prioridad</label><select id="filterPrioridad"><option value="">Todas</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option><option value="Programar">Programar</option></select></div>
                 <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option></select></div>
                 <div class="filter-group"><label>📢 Publicado</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí</option><option value="No">No</option></select></div>
@@ -565,13 +566,14 @@
                             <th>📅 Fecha Programación</th>
                             <th>🏫 Nivel</th>
                             <th>👤 Responsable</th>
+                            <th>✍️ Elaborado por</th>
                             <th>⭐ Prioridad</th>
                             <th>✅ Estado</th>
                             <th>📢 Publicado</th>
                             <th>⚙️ Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody"><tr><td colspan="9">Cargando...</td></tr>
+                    <tbody id="resultsTableBody"><tr><td colspan="10">Cargando...</td></tr>
                 </table>
             </div>
         </div>
@@ -743,7 +745,7 @@
                 } 
             }); 
             let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total-a.total); 
-            document.getElementById('elaboradoRankingBody').innerHTML=ranking.length? ranking.map((r,idx)=>`<tr><td>✍️ ${r.nombre}</td><td><strong>${r.total}</strong></td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td><td>${idx===0?'⭐👑':idx===1?'🥈':idx===2?'🥉':''}</td></tr>`).join(''):'<tr><td colspan="6">Sin datos</td></tr>'; 
+            document.getElementById('elaboradoRankingBody').innerHTML=ranking.length? ranking.map((r,idx)=>`<tr><td>✍️ ${r.nombre}</td><td><strong>${r.total}</strong></td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td><td>${idx===0?'⭐👑':idx===1?'🥈':idx===2?'🥉':''}</td></td>`).join(''):'<tr><td colspan="6">Sin datos</td></tr>'; 
             actualizarColaboradorEstrella(); 
         }
         
@@ -807,7 +809,6 @@
         function parsearFechaRegistro(fechaStr) {
             if (!fechaStr || fechaStr === '-') return new Date(0);
             try {
-                // El formato viene como "31/12/2025, 14:30:00" desde toLocaleString('es-MX')
                 let partes = fechaStr.split(', ');
                 if (partes.length !== 2) return new Date(fechaStr);
                 let fechaParte = partes[0].split('/');
@@ -828,7 +829,13 @@
         }
         
         function filtrarDatos(){ 
-            let mes=document.getElementById('filterMes').value, nivel=document.getElementById('filterNivel').value, responsable=document.getElementById('filterResponsable').value, prioridad=document.getElementById('filterPrioridad').value, estado=document.getElementById('filterEstado').value, publicado=document.getElementById('filterPublicado').value; 
+            let mes=document.getElementById('filterMes').value, 
+                nivel=document.getElementById('filterNivel').value, 
+                responsable=document.getElementById('filterResponsable').value,
+                elaboradoPor=document.getElementById('filterElaboradoPor').value,
+                prioridad=document.getElementById('filterPrioridad').value, 
+                estado=document.getElementById('filterEstado').value, 
+                publicado=document.getElementById('filterPublicado').value; 
             return allData.filter(i=>{ 
                 if(mes && i.FECHA_PROG){ 
                     let fp=obtenerFechaYYYYMMDD(i.FECHA_PROG); 
@@ -836,7 +843,8 @@
                     else if(!fp) return false; 
                 } 
                 if(nivel && i.NIVEL!==nivel) return false; 
-                if(responsable && i.RESPONSABLE!==responsable) return false; 
+                if(responsable && i.RESPONSABLE!==responsable) return false;
+                if(elaboradoPor && i.ELABORADO_POR!==elaboradoPor) return false;
                 if(prioridad && i.PRIORIDAD!==prioridad) return false; 
                 if(estado && i.REVISION!==estado) return false; 
                 if(publicado && i.PUBLICADO!==publicado) return false; 
@@ -851,7 +859,7 @@
             filtrados.sort((a,b)=>{ 
                 let fa = parsearFechaRegistro(a.FECHA_REGISTRO);
                 let fb = parsearFechaRegistro(b.FECHA_REGISTRO);
-                return fb - fa; // Más reciente primero
+                return fb - fa;
             });
             
             document.getElementById('resultCount').innerHTML=filtrados.length; 
@@ -867,31 +875,31 @@
                     <td ${fechaProgClass} ${fechaProgTooltip}>${formatearFechaProgramacion(fechaProgramacion)}</td>
                     <td>${i.NIVEL||'-'}</td>
                     <td>${i.RESPONSABLE||'-'}</td>
+                    <td>${i.ELABORADO_POR||'-'}</td>
                     <td><span class="badge editable ${i.PRIORIDAD==='Alta'?'alta':i.PRIORIDAD==='Media'?'media':i.PRIORIDAD==='Programar'?'programar':'baja'}" onclick="abrirModalPrioridad('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PRIORIDAD||'Media'}','${i.FECHA_PROGRAMACION||''}')">${i.PRIORIDAD||'Media'}</span></td>
                     <td><span class="badge editable pending" onclick="abrirModalEstado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.REVISION||'PENDIENTE'}')">${i.REVISION||'-'}</span></td>
                     <td><span class="badge editable ${i.PUBLICADO==='Sí'?'published':'pending'}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${i.PUBLICADO==='Sí'?'✅ Sí':'❌ No'}</span></td>
                     <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
                 </tr>`;
-            }).join(''):'<tr><td colspan="9">📭 Sin resultados</td></tr>'; 
+            }).join(''):'<tr><td colspan="10">📭 Sin resultados</td></tr>'; 
         }
         
         function limpiarFiltros(){ 
-            ['filterMes','filterNivel','filterResponsable','filterPrioridad','filterEstado','filterPublicado'].forEach(id=>document.getElementById(id).value=''); 
+            ['filterMes','filterNivel','filterResponsable','filterElaboradoPor','filterPrioridad','filterEstado','filterPublicado'].forEach(id=>document.getElementById(id).value=''); 
             aplicarFiltros(); 
         }
         
         function exportarReporte(){ 
             let filtrados = filtrarDatos();
-            // Ordenar descendente también para el CSV
             filtrados.sort((a,b)=>{ 
                 let fa = parsearFechaRegistro(a.FECHA_REGISTRO);
                 let fb = parsearFechaRegistro(b.FECHA_REGISTRO);
                 return fb - fa;
             });
             if(!filtrados.length){ alert('No hay datos'); return; } 
-            let csv="Contenido,Fecha Registro,Fecha Programación,Nivel,Responsable,Prioridad,Estado,Publicado\n"; 
+            let csv="Contenido,Fecha Registro,Fecha Programación,Nivel,Responsable,Elaborado por,Prioridad,Estado,Publicado\n"; 
             filtrados.forEach(i=>{ 
-                csv+=`"${i.CONTENIDO_CORTO||''}","${formatearFechaISO(i.FECHA_REGISTRO)}","${formatearFechaProgramacion(i.FECHA_PROGRAMACION||i.FECHA_PROG)}","${i.NIVEL||''}","${i.RESPONSABLE||''}","${i.PRIORIDAD||''}","${i.REVISION||''}","${i.PUBLICADO||''}"\n`; 
+                csv+=`"${i.CONTENIDO_CORTO||''}","${formatearFechaISO(i.FECHA_REGISTRO)}","${formatearFechaProgramacion(i.FECHA_PROGRAMACION||i.FECHA_PROG)}","${i.NIVEL||''}","${i.RESPONSABLE||''}","${i.ELABORADO_POR||''}","${i.PRIORIDAD||''}","${i.REVISION||''}","${i.PUBLICADO||''}"\n`; 
             }); 
             let blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}), link=document.createElement('a'); 
             link.href=URL.createObjectURL(blob); 
@@ -986,7 +994,7 @@
                 } 
             } catch(e){ 
                 console.error(e); 
-                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="9">⚠️ Error al cargar datos</td></tr>'; 
+                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="10">⚠️ Error al cargar datos</td></tr>'; 
             } 
         }
 
