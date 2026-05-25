@@ -302,6 +302,7 @@
         .badge.published { background: #d4edda; color: #155724; }
         .badge.pending { background: #fff3cd; color: #856404; }
         .badge.programar { background: #cce5ff; color: #004085; }
+        .badge.impreso { background: #d1ecf1; color: #0c5460; }
         .badge.editable { cursor: pointer; transition: transform 0.2s; }
         .badge.editable:hover { transform: scale(1.05); opacity: 0.8; }
         .btn-edit {
@@ -498,7 +499,7 @@
                     <div class="value" id="totalPublicaciones">0</div>
                     <div class="label">Total de Publicaciones</div>
                     <div class="sub-stats" id="detallePublicaciones">
-                        <span>✅ Publicadas: <strong id="pubPublicadas">0</strong></span>
+                        <span>✅ Publicadas/Impresas: <strong id="pubPublicadas">0</strong></span>
                         <span>❌ No publicadas: <strong id="pubNoPublicadas">0</strong></span>
                     </div>
                 </div>
@@ -524,14 +525,14 @@
             <h3 style="margin-top:15px;">📋 Ranking de Responsables</h3>
             <div class="ranking-table">
                 <table style="width:100%">
-                    <thead><tr><th>Responsable</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
+                    <thead><tr><th>Responsable</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
                     <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
                 </table>
             </div>
             <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por"</h3>
             <div class="ranking-table">
                 <table style="width:100%">
-                    <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th> </thead>
+                    <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr></thead>
                     <tbody id="elaboradoRankingBody"><tr><td colspan="6">Cargando...</td></tr>
                 </table>
             </div>
@@ -547,7 +548,8 @@
                 <div class="filter-group"><label>✍️ Elaborado por</label><select id="filterElaboradoPor"><option value="">Todos</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div>
                 <div class="filter-group"><label>⭐ Prioridad</label><select id="filterPrioridad"><option value="">Todas</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option><option value="Programar">Programar</option></select></div>
                 <div class="filter-group"><label>✅ Estado</label><select id="filterEstado"><option value="">Todos</option><option value="LISTO">LISTO</option><option value="PENDIENTE">PENDIENTE</option><option value="EN REVISIÓN">EN REVISIÓN</option><option value="CORREGIR">CORREGIR</option></select></div>
-                <div class="filter-group"><label>📢 Publicado</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí</option><option value="No">No</option></select></div>
+                <div class="filter-group"><label>📢 Publicado/Impreso</label><select id="filterPublicado"><option value="">Todos</option><option value="Sí">Sí (Publicado)</option><option value="No">No</option><option value="Impreso">Impreso</option></select></div>
+                <div class="filter-group"><label>🌐 Plataforma</label><select id="filterPlataforma"><option value="">Todas</option><option value="Facebook">Facebook</option><option value="Instagram">Instagram</option><option value="Web">Web</option><option value="Historia">Historia</option><option value="Todas">Todas</option><option value="Impresión">Impresión</option></select></div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="btn-filter" onclick="aplicarFiltros()">🔍 Aplicar</button>
@@ -570,11 +572,12 @@
                             <th>✍️ Elaborado por</th>
                             <th>⭐ Prioridad</th>
                             <th>✅ Estado</th>
-                            <th>📢 Publicado</th>
+                            <th>📢 Publicado/Impreso</th>
+                            <th>🌐 Plataforma</th>
                             <th>⚙️ Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody"><tr><td colspan="10">Cargando...</td></tr>
+                    <tbody id="resultsTableBody"><tr><td colspan="11">Cargando...</td></tr>
                 </table>
             </div>
         </div>
@@ -583,9 +586,9 @@
     <button class="fab" id="openModalBtn">➕</button>
 
     <!-- MODALES -->
-    <div id="eventModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-body"><div id="modalAlert" class="alert"></div><div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div><form id="contentForm"><input type="hidden" id="editId" value=""><div class="form-grid"><div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div><div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div><div class="form-group"><label class="required">✅ Estado / Revisión</label><select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><div class="form-group"><label class="required">⭐ Prioridad</label><select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select></div><div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div><div class="form-group"><label>📢 ¿Publicado?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div><div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option></select></div><div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button></div></div><div class="form-group"><label class="required">🏫 Nivel</label><select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select></div><div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div><div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div><div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div><div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div><div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div></div><button type="submit" class="btn-submit">💾 Guardar contenido</button></form></div></div></div>
+    <div id="eventModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-body"><div id="modalAlert" class="alert"></div><div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div><form id="contentForm"><input type="hidden" id="editId" value=""><div class="form-grid"><div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div><div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div><div class="form-group"><label class="required">✅ Estado / Revisión</label><select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><div class="form-group"><label class="required">⭐ Prioridad</label><select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select></div><div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div><div class="form-group"><label>📢 ¿Publicado/Impreso?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí (Publicado digital)</option><option value="Impreso">🖨️ Impreso</option></select></div><div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option><option value="Impresión">🖨️ Impresión</option></select></div><div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button></div></div><div class="form-group"><label class="required">🏫 Nivel</label><select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select></div><div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div><div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div><div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div><div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div><div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div></div><button type="submit" class="btn-submit">💾 Guardar contenido</button></form></div></div></div>
     <div id="estadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📝 Cambiar Estado</h2><button class="modal-close" id="closeEstadoModalBtn">&times;</button></div><div class="modal-body"><div id="estadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p><div class="form-group"><label>✅ Selecciona nuevo estado:</label><select id="nuevoEstado" style="width:100%; padding:10px; border-radius:8px;"><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><button class="btn-submit" onclick="guardarCambioEstado()">💾 Guardar cambios</button></div></div></div>
-    <div id="publicadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📢 Cambiar Publicación</h2><button class="modal-close" id="closePublicadoModalBtn">&times;</button></div><div class="modal-body"><div id="publicadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="publicadoContenidoTitulo"></span></p><div class="form-group"><label>📢 ¿Publicado?</label><select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px;"><option value="No">❌ No</option><option value="Sí">✅ Sí</option></select></div><button class="btn-submit" onclick="guardarCambioPublicado()">💾 Guardar cambios</button></div></div></div>
+    <div id="publicadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📢 Cambiar Publicación/Impresión</h2><button class="modal-close" id="closePublicadoModalBtn">&times;</button></div><div class="modal-body"><div id="publicadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="publicadoContenidoTitulo"></span></p><div class="form-group"><label>📢 Selecciona estado:</label><select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px;"><option value="No">❌ No</option><option value="Sí">✅ Sí (Publicado digital)</option><option value="Impreso">🖨️ Impreso</option></select></div><button class="btn-submit" onclick="guardarCambioPublicado()">💾 Guardar cambios</button></div></div></div>
     <div id="prioridadModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>⭐ Cambiar Prioridad</h2><button class="modal-close" id="closePrioridadModalBtn">&times;</button></div><div class="modal-body"><div id="prioridadModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="prioridadContenidoTitulo"></span></p><div class="form-group"><label>⭐ Selecciona nueva prioridad:</label><select id="nuevoPrioridad" style="width:100%; padding:10px; border-radius:8px;" onchange="togglePrioridadFecha()"><option value="Baja">🟢 Baja</option><option value="Media">🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 Programar</option></select></div><div id="prioridadDateField" style="display:none; margin-top:15px;"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="nuevoFechaProgramacion" style="width:100%; padding:10px; border-radius:8px;"></div></div><button class="btn-submit" onclick="guardarCambioPrioridad()">💾 Guardar cambios</button></div></div></div>
 
     <script>
@@ -741,7 +744,7 @@
                 if(e){ 
                     if(!stats[e]) stats[e]={total:0,publicados:0,pendientes:0}; 
                     stats[e].total++; 
-                    if(i.PUBLICADO==='Sí') stats[e].publicados++; 
+                    if(i.PUBLICADO==='Sí' || i.PUBLICADO==='Impreso') stats[e].publicados++; 
                     else stats[e].pendientes++; 
                 } 
             }); 
@@ -785,7 +788,7 @@
                 if(!r.RESPONSABLE) return; 
                 if(!stats[r.RESPONSABLE]) stats[r.RESPONSABLE]={total:0,publicados:0,pendientes:0}; 
                 stats[r.RESPONSABLE].total++; 
-                if(r.PUBLICADO==='Sí') stats[r.RESPONSABLE].publicados++; 
+                if(r.PUBLICADO==='Sí' || r.PUBLICADO==='Impreso') stats[r.RESPONSABLE].publicados++; 
                 else stats[r.RESPONSABLE].pendientes++; 
             }); 
             let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total - a.total);
@@ -793,7 +796,7 @@
         }
         
         function actualizarDashboard(){ 
-            let total=allData.length, publicados=allData.filter(r=>r.PUBLICADO==='Sí').length, noPublicados=total-publicados, programados=allData.filter(r=>r.PRIORIDAD==='Programar').length; 
+            let total=allData.length, publicados=allData.filter(r=>r.PUBLICADO==='Sí' || r.PUBLICADO==='Impreso').length, noPublicados=total-publicados, programados=allData.filter(r=>r.PRIORIDAD==='Programar').length; 
             document.getElementById('tasaPublicacion').innerHTML=total?((publicados/total)*100).toFixed(1)+'%':'0%'; 
             document.getElementById('totalPublicaciones').innerHTML=total; 
             document.getElementById('pubPublicadas').innerHTML=publicados;
@@ -835,9 +838,9 @@
                 elaboradoPor=document.getElementById('filterElaboradoPor').value,
                 prioridad=document.getElementById('filterPrioridad').value, 
                 estado=document.getElementById('filterEstado').value, 
-                publicado=document.getElementById('filterPublicado').value; 
+                publicado=document.getElementById('filterPublicado').value,
+                plataforma=document.getElementById('filterPlataforma').value; 
             return allData.filter(i=>{ 
-                // Filtro por día específico (FECHA_PROG)
                 if(fechaDia){
                     let fechaProg = obtenerFechaYYYYMMDD(i.FECHA_PROG);
                     if(fechaProg !== fechaDia) return false;
@@ -852,7 +855,8 @@
                 if(elaboradoPor && i.ELABORADO_POR!==elaboradoPor) return false;
                 if(prioridad && i.PRIORIDAD!==prioridad) return false; 
                 if(estado && i.REVISION!==estado) return false; 
-                if(publicado && i.PUBLICADO!==publicado) return false; 
+                if(publicado && i.PUBLICADO!==publicado) return false;
+                if(plataforma && i.PLATAFORMA!==plataforma) return false;
                 return true; 
             }); 
         }
@@ -872,6 +876,8 @@
                 let esProxima = esFechaProxima(fechaProgramacion);
                 let fechaProgClass = esProxima ? 'class="fecha-proxima"' : '';
                 let fechaProgTooltip = esProxima ? 'title="📅 Fecha próxima/actual"' : '';
+                let publicoClass = i.PUBLICADO==='Sí' ? 'published' : (i.PUBLICADO==='Impreso' ? 'impreso' : 'pending');
+                let publicoText = i.PUBLICADO==='Sí' ? '✅ Sí' : (i.PUBLICADO==='Impreso' ? '🖨️ Impreso' : '❌ No');
                 
                 return `<tr>
                     <td><strong>${i.CONTENIDO_CORTO||'-'}</strong></td>
@@ -882,14 +888,15 @@
                     <td>${i.ELABORADO_POR||'-'}</td>
                     <td><span class="badge editable ${i.PRIORIDAD==='Alta'?'alta':i.PRIORIDAD==='Media'?'media':i.PRIORIDAD==='Programar'?'programar':'baja'}" onclick="abrirModalPrioridad('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PRIORIDAD||'Media'}','${i.FECHA_PROGRAMACION||''}')">${i.PRIORIDAD||'Media'}</span></td>
                     <td><span class="badge editable pending" onclick="abrirModalEstado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.REVISION||'PENDIENTE'}')">${i.REVISION||'-'}</span></td>
-                    <td><span class="badge editable ${i.PUBLICADO==='Sí'?'published':'pending'}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${i.PUBLICADO==='Sí'?'✅ Sí':'❌ No'}</span></td>
+                    <td><span class="badge editable ${publicoClass}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${publicoText}</span></td>
+                    <td><span class="badge">${i.PLATAFORMA||'-'}</span></td>
                     <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
                 </tr>`;
-            }).join(''):'<tr><td colspan="10">📭 Sin resultados</td></tr>'; 
+            }).join(''):'<tr><td colspan="11">📭 Sin resultados</td></tr>'; 
         }
         
         function limpiarFiltros(){ 
-            ['filterFechaDia','filterMes','filterNivel','filterResponsable','filterElaboradoPor','filterPrioridad','filterEstado','filterPublicado'].forEach(id=>{
+            ['filterFechaDia','filterMes','filterNivel','filterResponsable','filterElaboradoPor','filterPrioridad','filterEstado','filterPublicado','filterPlataforma'].forEach(id=>{
                 let el = document.getElementById(id);
                 if(el) el.value = '';
             });
@@ -904,9 +911,9 @@
                 return fb - fa;
             });
             if(!filtrados.length){ alert('No hay datos'); return; } 
-            let csv="Contenido,Fecha Registro,Fecha Programación,Nivel,Responsable,Elaborado por,Prioridad,Estado,Publicado\n"; 
+            let csv="Contenido,Fecha Registro,Fecha Programación,Nivel,Responsable,Elaborado por,Prioridad,Estado,Publicado/Impreso,Plataforma,Link,Visualizaciones\n"; 
             filtrados.forEach(i=>{ 
-                csv+=`"${i.CONTENIDO_CORTO||''}","${formatearFechaISO(i.FECHA_REGISTRO)}","${formatearFechaProgramacion(i.FECHA_PROGRAMACION||i.FECHA_PROG)}","${i.NIVEL||''}","${i.RESPONSABLE||''}","${i.ELABORADO_POR||''}","${i.PRIORIDAD||''}","${i.REVISION||''}","${i.PUBLICADO||''}"\n`; 
+                csv+=`"${i.CONTENIDO_CORTO||''}","${formatearFechaISO(i.FECHA_REGISTRO)}","${formatearFechaProgramacion(i.FECHA_PROGRAMACION||i.FECHA_PROG)}","${i.NIVEL||''}","${i.RESPONSABLE||''}","${i.ELABORADO_POR||''}","${i.PRIORIDAD||''}","${i.REVISION||''}","${i.PUBLICADO||''}","${i.PLATAFORMA||''}","${i.LINK||''}","${i.VISUALIZACIONES||'0'}"\n`; 
             }); 
             let blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}), link=document.createElement('a'); 
             link.href=URL.createObjectURL(blob); 
@@ -1001,7 +1008,7 @@
                 } 
             } catch(e){ 
                 console.error(e); 
-                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="10">⚠️ Error al cargar datos</td></tr>'; 
+                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="11">⚠️ Error al cargar datos</td></tr>'; 
             } 
         }
 
