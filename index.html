@@ -395,12 +395,29 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        .btn-copy-icon:hover, .btn-open-link:hover {
+        .btn-copy-link {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            min-width: 42px;
+            height: 42px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-copy-icon:hover, .btn-open-link:hover, .btn-copy-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         
-        .btn-copy-icon.copied {
+        .btn-copy-icon.copied, .btn-copy-link.copied {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             animation: pulse 0.5s ease;
         }
@@ -411,9 +428,9 @@
             100% { transform: scale(1); }
         }
         
-        .btn-copy-icon, .btn-open-link { position: relative; }
+        .btn-copy-icon, .btn-open-link, .btn-copy-link { position: relative; }
         
-        .btn-copy-icon::before, .btn-open-link::before {
+        .btn-copy-icon::before, .btn-open-link::before, .btn-copy-link::before {
             content: attr(data-tooltip);
             position: absolute;
             bottom: 100%;
@@ -432,7 +449,7 @@
             z-index: 1000;
         }
         
-        .btn-copy-icon:hover::before, .btn-open-link:hover::before { opacity: 1; }
+        .btn-copy-icon:hover::before, .btn-open-link:hover::before, .btn-copy-link:hover::before { opacity: 1; }
         
         .copy-feedback-toast {
             position: fixed;
@@ -455,6 +472,12 @@
             color: #dc3545 !important;
             font-weight: bold !important;
         }
+
+        /* Estilo para contenido no publicado: ROJO + NEGRITAS */
+        .contenido-no-publicado {
+            color: #dc3545 !important;
+            font-weight: bold !important;
+        }
         
         @keyframes slideUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -468,7 +491,7 @@
             .dashboard-grid { grid-template-columns: 1fr; }
             .fab { width: 50px; height: 50px; font-size: 24px; }
             .input-with-copy { flex-direction: column; }
-            .btn-copy-icon, .btn-open-link { width: 100%; }
+            .btn-copy-icon, .btn-open-link, .btn-copy-link { width: 100%; }
             .today-posts-card { grid-column: span 1; }
             .metric-card .sub-stats { flex-direction: column; gap: 5px; }
         }
@@ -527,14 +550,16 @@
                 <table style="width:100%">
                     <thead><tr><th>Responsable</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
                     <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
-                </table>
+                </tbody>
+            </table>
             </div>
             <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por"</h3>
             <div class="ranking-table">
                 <table style="width:100%">
                     <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr></thead>
                     <tbody id="elaboradoRankingBody"><tr><td colspan="6">Cargando...</td></tr>
-                </table>
+                </tbody>
+            </table>
             </div>
         </div>
 
@@ -577,8 +602,9 @@
                             <th>⚙️ Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody"><tr><td colspan="11">Cargando...</td></tr>
-                </table>
+                    <tbody id="resultsTableBody"> hilab<td colspan="11">Cargando...</td></tr>
+                </tbody>
+            </table>
             </div>
         </div>
     </div>
@@ -586,7 +612,7 @@
     <button class="fab" id="openModalBtn">➕</button>
 
     <!-- MODALES -->
-    <div id="eventModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-body"><div id="modalAlert" class="alert"></div><div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div><form id="contentForm"><input type="hidden" id="editId" value=""><div class="form-grid"><div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div><div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div><div class="form-group"><label class="required">✅ Estado / Revisión</label><select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><div class="form-group"><label class="required">⭐ Prioridad</label><select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select></div><div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div><div class="form-group"><label>📢 ¿Publicado/Impreso?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí (Publicado digital)</option><option value="Impreso">🖨️ Impreso</option></select></div><div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option><option value="Impresión">🖨️ Impresión</option></select></div><div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button></div></div><div class="form-group"><label class="required">🏫 Nivel</label><select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select></div><div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div><div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div><div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div><div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div><div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div></div><button type="submit" class="btn-submit">💾 Guardar contenido</button></form></div></div></div>
+    <div id="eventModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">✏️ Nuevo contenido</h2><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-body"><div id="modalAlert" class="alert"></div><div class="timestamp-info" id="systemTimestamp">Fecha y hora del sistema: Cargando...</div><form id="contentForm"><input type="hidden" id="editId" value=""><div class="form-grid"><div class="form-group"><label class="required">📝 Contenido corto</label><input type="text" id="contenido_corto" required placeholder="Ej: Proyecto Pymes, Spelling Bee..."></div><div class="form-group"><label class="required">📅 Fecha publicación</label><input type="date" id="fecha_prog" required></div><div class="form-group"><label class="required">✅ Estado / Revisión</label><select id="revision" required><option value="">Seleccionar</option><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><div class="form-group"><label class="required">⭐ Prioridad</label><select id="prioridad" required><option value="Baja">🟢 Baja</option><option value="Media" selected>🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 PROGRAMAR - Agendar</option></select></div><div id="programarDateField" class="conditional-field full-width"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="fecha_programacion"><div class="field-hint" style="font-size:11px; color:#666; margin-top:5px;">⚠️ Fecha para publicar este contenido</div></div></div><div class="form-group"><label>📢 ¿Publicado/Impreso?</label><select id="publicado"><option value="No">❌ No</option><option value="Sí">✅ Sí (Publicado digital)</option><option value="Impreso">🖨️ Impreso</option></select></div><div class="form-group"><label>🌐 Plataforma</label><select id="plataforma"><option value="">Seleccionar</option><option value="Facebook">📘 Facebook</option><option value="Instagram">📷 Instagram</option><option value="Web">🌍 Web</option><option value="Historia">⚡ Historia</option><option value="Todas">🎯 Todas</option><option value="Impresión">🖨️ Impresión</option></select></div><div class="form-group full-width"><label>🔗 Link</label><div class="input-with-copy"><input type="url" id="link" placeholder="https://"><button type="button" class="btn-open-link" onclick="abrirLink()" data-tooltip="Abrir enlace">🔗</button><button type="button" class="btn-copy-link" onclick="copiarLink()" data-tooltip="Copiar enlace">📋</button></div></div><div class="form-group"><label class="required">🏫 Nivel</label><select id="nivel" required><option value="">Seleccionar nivel...</option><option value="Bachillerato Salitrillo">🎓 Bachillerato Salitrillo</option><option value="Centro Universitario Los Ángeles">🏛️ Centro Universitario Los Ángeles</option><option value="Preescolar Centro">🎨 Preescolar Centro</option><option value="Preescolar San Miguel">🎨 Preescolar San Miguel</option><option value="Prepa CUA">📚 Prepa CUA</option><option value="Primaria Centro">📖 Primaria Centro</option><option value="Primaria San Miguel">📖 Primaria San Miguel</option><option value="Secundaria Centro">📘 Secundaria Centro</option><option value="Secundaria Salitrillo">📘 Secundaria Salitrillo</option><option value="Secundaria San Miguel">📘 Secundaria San Miguel</option><option value="Universidad Los Ángeles">🎓 Universidad Los Ángeles</option><option value="Plantel Centro">🏛️ Plantel Centro</option><option value="Plantel Salitrillo">🏛️ Plantel Salitrillo</option><option value="Plantel San Miguel">🏛️ Plantel San Miguel</option></select></div><div class="form-group"><label class="required">👤 Responsable</label><select id="responsable" required><option value="">Seleccionar responsable...</option></select></div><div class="form-group"><label class="required">✍️ Elaborado por</label><select id="elaborado_por" required><option value="">Seleccionar</option><option value="Andrés">Andrés</option><option value="Humberto">Humberto</option><option value="Josymar">Josymar</option><option value="Sarain">Sarain</option><option value="Víctor">Víctor</option></select></div><div class="form-group"><label>👁️ Visualizaciones</label><input type="number" id="visualizaciones" value="0" min="0"></div><div class="full-width"><div class="form-group"><label class="required">📄 Copy completo</label><div class="input-with-copy"><textarea id="copy_completo" required rows="3" placeholder="Texto completo del contenido..."></textarea><button type="button" class="btn-copy-icon" onclick="copiarTexto('copy_completo', this)" data-tooltip="Copiar texto">📋</button></div></div></div><div class="full-width"><div class="form-group"><label>💬 Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas internas..."></textarea></div></div></div><button type="submit" class="btn-submit">💾 Guardar contenido</button></form></div></div></div>
     <div id="estadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📝 Cambiar Estado</h2><button class="modal-close" id="closeEstadoModalBtn">&times;</button></div><div class="modal-body"><div id="estadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="estadoContenidoTitulo"></span></p><div class="form-group"><label>✅ Selecciona nuevo estado:</label><select id="nuevoEstado" style="width:100%; padding:10px; border-radius:8px;"><option value="LISTO">✅ LISTO - Aprobado</option><option value="PENDIENTE">⏳ PENDIENTE - Por revisar</option><option value="EN REVISIÓN">🔍 EN REVISIÓN</option><option value="CORREGIR">✏️ CORREGIR - Cambios necesarios</option></select></div><button class="btn-submit" onclick="guardarCambioEstado()">💾 Guardar cambios</button></div></div></div>
     <div id="publicadoModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>📢 Cambiar Publicación/Impresión</h2><button class="modal-close" id="closePublicadoModalBtn">&times;</button></div><div class="modal-body"><div id="publicadoModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="publicadoContenidoTitulo"></span></p><div class="form-group"><label>📢 Selecciona estado:</label><select id="nuevoPublicado" style="width:100%; padding:10px; border-radius:8px;"><option value="No">❌ No</option><option value="Sí">✅ Sí (Publicado digital)</option><option value="Impreso">🖨️ Impreso</option></select></div><button class="btn-submit" onclick="guardarCambioPublicado()">💾 Guardar cambios</button></div></div></div>
     <div id="prioridadModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>⭐ Cambiar Prioridad</h2><button class="modal-close" id="closePrioridadModalBtn">&times;</button></div><div class="modal-body"><div id="prioridadModalAlert" class="alert"></div><p><strong>Contenido:</strong> <span id="prioridadContenidoTitulo"></span></p><div class="form-group"><label>⭐ Selecciona nueva prioridad:</label><select id="nuevoPrioridad" style="width:100%; padding:10px; border-radius:8px;" onchange="togglePrioridadFecha()"><option value="Baja">🟢 Baja</option><option value="Media">🟡 Media</option><option value="Alta">🔴 Alta</option><option value="Programar">📅 Programar</option></select></div><div id="prioridadDateField" style="display:none; margin-top:15px;"><div class="date-field"><label>📅 Fecha de programación:</label><input type="date" id="nuevoFechaProgramacion" style="width:100%; padding:10px; border-radius:8px;"></div></div><button class="btn-submit" onclick="guardarCambioPrioridad()">💾 Guardar cambios</button></div></div></div>
@@ -669,6 +695,19 @@
                 mostrarToast('✅ Copiado','#28a745'); 
                 setTimeout(()=>{ btn.innerHTML=orig; btn.classList.remove('copied'); },1500); 
             }).catch(()=>mostrarToast('❌ Error','#dc3545')); 
+        }
+        
+        function copiarLink() {
+            let url = document.getElementById('link').value.trim();
+            if(!url){ mostrarToast('⚠️ No hay enlace para copiar','#ffc107'); return; }
+            navigator.clipboard.writeText(url).then(()=>{ 
+                let btn = document.querySelector('.btn-copy-link');
+                let orig = btn.innerHTML;
+                btn.innerHTML = '✅';
+                btn.classList.add('copied');
+                mostrarToast('✅ Enlace copiado','#28a745');
+                setTimeout(()=>{ btn.innerHTML = orig; btn.classList.remove('copied'); },1500);
+            }).catch(()=>mostrarToast('❌ Error al copiar','#dc3545'));
         }
         
         function abrirLink(){ 
@@ -879,8 +918,11 @@
                 let publicoClass = i.PUBLICADO==='Sí' ? 'published' : (i.PUBLICADO==='Impreso' ? 'impreso' : 'pending');
                 let publicoText = i.PUBLICADO==='Sí' ? '✅ Sí' : (i.PUBLICADO==='Impreso' ? '🖨️ Impreso' : '❌ No');
                 
+                // Determinar si el contenido NO está publicado para aplicar estilo rojo + negritas
+                let contenidoClass = (i.PUBLICADO !== 'Sí' && i.PUBLICADO !== 'Impreso') ? 'class="contenido-no-publicado"' : '';
+                
                 return `<tr>
-                    <td><strong>${i.CONTENIDO_CORTO||'-'}</strong></td>
+                    <td><strong ${contenidoClass}>${i.CONTENIDO_CORTO||'-'}</strong></td>
                     <td>${formatearFechaISO(i.FECHA_REGISTRO)}</td>
                     <td ${fechaProgClass} ${fechaProgTooltip}>${formatearFechaProgramacion(fechaProgramacion)}</td>
                     <td>${i.NIVEL||'-'}</td>
@@ -1008,7 +1050,7 @@
                 } 
             } catch(e){ 
                 console.error(e); 
-                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="11">⚠️ Error al cargar datos</td></tr>'; 
+                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="11">⚠️ Error al cargar datos</td></table>'; 
             } 
         }
 
