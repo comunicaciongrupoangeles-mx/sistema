@@ -551,7 +551,7 @@
                     <thead><tr><th>Responsable</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
                     <tbody id="rankingTableBody"><tr><td colspan="5">Cargando...</td></tr>
                 </tbody>
-            </table>
+                </table>
             </div>
             <h3 style="margin-top:25px;">✍️ Ranking por "Elaborado por"</h3>
             <div class="ranking-table">
@@ -559,7 +559,7 @@
                     <thead><tr><th>Elaborado por</th><th>Total</th><th>Publicados/Impresos</th><th>Pendientes</th><th>Eficiencia</th><th>🏆</th></tr></thead>
                     <tbody id="elaboradoRankingBody"><tr><td colspan="6">Cargando...</td></tr>
                 </tbody>
-            </table>
+                </table>
             </div>
         </div>
 
@@ -602,9 +602,9 @@
                             <th>⚙️ Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="resultsTableBody"> hilab<td colspan="11">Cargando...</td></tr>
+                    <tbody id="resultsTableBody"><tr><td colspan="11">Cargando...</td></tr>
                 </tbody>
-            </table>
+                </table>
             </div>
         </div>
     </div>
@@ -737,6 +737,7 @@
                     document.getElementById('visualizaciones').value='0'; 
                     document.getElementById('prioridad').value='Media'; 
                     document.getElementById('programarDateField').classList.remove('show'); 
+                    document.getElementById('fecha_programacion').value = '';
                 }
                 setTimeout(()=>{ 
                     loadData(); 
@@ -918,7 +919,6 @@
                 let publicoClass = i.PUBLICADO==='Sí' ? 'published' : (i.PUBLICADO==='Impreso' ? 'impreso' : 'pending');
                 let publicoText = i.PUBLICADO==='Sí' ? '✅ Sí' : (i.PUBLICADO==='Impreso' ? '🖨️ Impreso' : '❌ No');
                 
-                // Determinar si el contenido NO está publicado para aplicar estilo rojo + negritas
                 let contenidoClass = (i.PUBLICADO !== 'Sí' && i.PUBLICADO !== 'Impreso') ? 'class="contenido-no-publicado"' : '';
                 
                 return `<tr>
@@ -1050,8 +1050,68 @@
                 } 
             } catch(e){ 
                 console.error(e); 
-                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="11">⚠️ Error al cargar datos</td></table>'; 
+                document.getElementById('resultsTableBody').innerHTML='<tr><td colspan="11">⚠️ Error al cargar datos</td></tr>'; 
             } 
+        }
+
+        // 🔧 FUNCIÓN ABRIR MODAL CORREGIDA
+        function abrirModal(edit=null){ 
+            if(edit){ 
+                document.getElementById('modalTitle').innerHTML='✏️ Editar contenido'; 
+                document.getElementById('editId').value=edit.ID_UNICO||''; 
+                document.getElementById('contenido_corto').value=edit.CONTENIDO_CORTO||''; 
+                document.getElementById('copy_completo').value=edit.COPY_COMPLETO||''; 
+                document.getElementById('fecha_prog').value=obtenerFechaYYYYMMDD(edit.FECHA_PROG)||getToday(); 
+                document.getElementById('revision').value=edit.REVISION||'PENDIENTE'; 
+                document.getElementById('publicado').value=edit.PUBLICADO||'No'; 
+                document.getElementById('plataforma').value=edit.PLATAFORMA||''; 
+                document.getElementById('link').value=edit.LINK||''; 
+                document.getElementById('nivel').value=edit.NIVEL||''; 
+                document.getElementById('responsable').value=edit.RESPONSABLE||''; 
+                document.getElementById('elaborado_por').value=edit.ELABORADO_POR||''; 
+                document.getElementById('visualizaciones').value=edit.VISUALIZACIONES||'0'; 
+                document.getElementById('prioridad').value=edit.PRIORIDAD||'Media'; 
+                document.getElementById('observaciones').value=edit.OBSERVACIONES||''; 
+                
+                // 🔧 CORRECCIÓN: Sincronizar correctamente la fecha de programación
+                let fechaProgEdit = edit.FECHA_PROGRAMACION || edit.fecha_programacion || '';
+                if(fechaProgEdit){
+                    let fechaFormateada = obtenerFechaYYYYMMDD(fechaProgEdit);
+                    if(fechaFormateada){
+                        document.getElementById('fecha_programacion').value = fechaFormateada;
+                    } else {
+                        document.getElementById('fecha_programacion').value = fechaProgEdit;
+                    }
+                } else {
+                    document.getElementById('fecha_programacion').value = '';
+                }
+                
+                // Forzar la actualización del campo de programación según la prioridad
+                if(edit.PRIORIDAD === 'Programar'){ 
+                    setTimeout(() => {
+                        toggleProgramarDate();
+                        let fechaInput = document.getElementById('fecha_programacion');
+                        if(fechaProgEdit && !fechaInput.value){
+                            let fechaFormateada = obtenerFechaYYYYMMDD(fechaProgEdit);
+                            if(fechaFormateada) fechaInput.value = fechaFormateada;
+                        }
+                    }, 100);
+                } else { 
+                    toggleProgramarDate(); 
+                } 
+            } else { 
+                document.getElementById('modalTitle').innerHTML='✏️ Nuevo contenido'; 
+                document.getElementById('editId').value=''; 
+                document.getElementById('contentForm').reset(); 
+                document.getElementById('fecha_prog').value=getToday(); 
+                document.getElementById('publicado').value='No'; 
+                document.getElementById('prioridad').value='Media'; 
+                document.getElementById('visualizaciones').value='0'; 
+                document.getElementById('fecha_programacion').value = '';
+                progField.classList.remove('show'); 
+            } 
+            modal.classList.add('active'); 
+            document.body.style.overflow='hidden'; 
         }
 
         document.getElementById('fecha_prog').value=getToday();
@@ -1079,41 +1139,6 @@
         let modal=document.getElementById('eventModal'), estadoModal=document.getElementById('estadoModal'), publicadoModal=document.getElementById('publicadoModal'), prioridadModal=document.getElementById('prioridadModal');
         let openModalBtn=document.getElementById('openModalBtn'), closeModalBtn=document.getElementById('closeModalBtn'), closeEstadoBtn=document.getElementById('closeEstadoModalBtn'), closePublicadoBtn=document.getElementById('closePublicadoModalBtn'), closePrioridadBtn=document.getElementById('closePrioridadModalBtn');
         
-        function abrirModal(edit=null){ 
-            if(edit){ 
-                document.getElementById('modalTitle').innerHTML='✏️ Editar contenido'; 
-                document.getElementById('editId').value=edit.ID_UNICO||''; 
-                document.getElementById('contenido_corto').value=edit.CONTENIDO_CORTO||''; 
-                document.getElementById('copy_completo').value=edit.COPY_COMPLETO||''; 
-                document.getElementById('fecha_prog').value=obtenerFechaYYYYMMDD(edit.FECHA_PROG)||getToday(); 
-                document.getElementById('revision').value=edit.REVISION||'PENDIENTE'; 
-                document.getElementById('publicado').value=edit.PUBLICADO||'No'; 
-                document.getElementById('plataforma').value=edit.PLATAFORMA||''; 
-                document.getElementById('link').value=edit.LINK||''; 
-                document.getElementById('nivel').value=edit.NIVEL||''; 
-                document.getElementById('responsable').value=edit.RESPONSABLE||''; 
-                document.getElementById('elaborado_por').value=edit.ELABORADO_POR||''; 
-                document.getElementById('visualizaciones').value=edit.VISUALIZACIONES||'0'; 
-                document.getElementById('prioridad').value=edit.PRIORIDAD||'Media'; 
-                document.getElementById('observaciones').value=edit.OBSERVACIONES||''; 
-                if(edit.PRIORIDAD==='Programar'){ 
-                    document.getElementById('fecha_programacion').value=edit.FECHA_PROGRAMACION||''; 
-                    setTimeout(toggleProgramarDate,100); 
-                } else toggleProgramarDate(); 
-            } else { 
-                document.getElementById('modalTitle').innerHTML='✏️ Nuevo contenido'; 
-                document.getElementById('editId').value=''; 
-                document.getElementById('contentForm').reset(); 
-                document.getElementById('fecha_prog').value=getToday(); 
-                document.getElementById('publicado').value='No'; 
-                document.getElementById('prioridad').value='Media'; 
-                document.getElementById('visualizaciones').value='0'; 
-                progField.classList.remove('show'); 
-            } 
-            modal.classList.add('active'); 
-            document.body.style.overflow='hidden'; 
-        }
-        
         openModalBtn.onclick=()=>abrirModal();
         closeModalBtn.onclick=()=>{ modal.classList.remove('active'); document.body.style.overflow=''; };
         modal.onclick=(e)=>{ if(e.target===modal){ modal.classList.remove('active'); document.body.style.overflow=''; } };
@@ -1124,16 +1149,39 @@
         closePrioridadBtn.onclick=()=>{ prioridadModal.classList.remove('active'); document.body.style.overflow=''; };
         prioridadModal.onclick=(e)=>{ if(e.target===prioridadModal){ prioridadModal.classList.remove('active'); document.body.style.overflow=''; } };
         
+        // 🔧 SUBMIT CORREGIDO
         document.getElementById('contentForm').addEventListener('submit',async(e)=>{ 
             e.preventDefault(); 
-            let editId=document.getElementById('editId').value, prioridad=document.getElementById('prioridad').value; 
-            if(prioridad==='Programar' && !fechaProgInput.value){ 
+            let editId=document.getElementById('editId').value, 
+                prioridad=document.getElementById('prioridad').value,
+                fechaProgramacionValue = document.getElementById('fecha_programacion').value;
+            
+            if(prioridad==='Programar' && !fechaProgramacionValue){ 
                 document.getElementById('modalAlert').className='alert error'; 
                 document.getElementById('modalAlert').innerHTML='❌ Debes elegir una fecha de programación'; 
                 setTimeout(()=>document.getElementById('modalAlert').className='alert',3000); 
                 return; 
             } 
-            let fd={id:editId||null,contenido_corto:document.getElementById('contenido_corto').value,copy_completo:document.getElementById('copy_completo').value,fecha_prog:document.getElementById('fecha_prog').value,fecha_registro:new Date().toLocaleString('es-MX'),revision:document.getElementById('revision').value,publicado:document.getElementById('publicado').value,plataforma:document.getElementById('plataforma').value,link:document.getElementById('link').value||'',nivel:document.getElementById('nivel').value,responsable:document.getElementById('responsable').value,elaborado_por:document.getElementById('elaborado_por').value,visualizaciones:document.getElementById('visualizaciones').value||'0',prioridad:prioridad,observaciones:document.getElementById('observaciones').value||'',fecha_programacion:prioridad==='Programar'?fechaProgInput.value:'',esActualizacion:!!editId}; 
+            
+            let fd={
+                id:editId||null,
+                contenido_corto:document.getElementById('contenido_corto').value,
+                copy_completo:document.getElementById('copy_completo').value,
+                fecha_prog:document.getElementById('fecha_prog').value,
+                fecha_registro:new Date().toLocaleString('es-MX'),
+                revision:document.getElementById('revision').value,
+                publicado:document.getElementById('publicado').value,
+                plataforma:document.getElementById('plataforma').value,
+                link:document.getElementById('link').value||'',
+                nivel:document.getElementById('nivel').value,
+                responsable:document.getElementById('responsable').value,
+                elaborado_por:document.getElementById('elaborado_por').value,
+                visualizaciones:document.getElementById('visualizaciones').value||'0',
+                prioridad:prioridad,
+                observaciones:document.getElementById('observaciones').value||'',
+                fecha_programacion: prioridad==='Programar' ? fechaProgramacionValue : '',
+                esActualizacion:!!editId
+            }; 
             await guardarDatos(fd,!!editId); 
         });
         
