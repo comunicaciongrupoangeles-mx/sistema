@@ -479,6 +479,20 @@
             color: #dc3545 !important;
             font-weight: bold !important;
         }
+
+        /* ===== PARPADEO INFINITO PARA BOTÓN "NO" ===== */
+        @keyframes blinkNo {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            25% { opacity: 0.3; transform: scale(0.92); }
+            75% { opacity: 0.3; transform: scale(0.92); }
+        }
+        .badge.blink-no {
+            animation: blinkNo 0.8s ease-in-out infinite;
+            font-weight: bold !important;
+            background: #f8d7da !important;
+            color: #721c24 !important;
+            border: 2px solid #dc3545;
+        }
         
         @keyframes slideUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -920,6 +934,10 @@
                 let publicoClass = i.PUBLICADO==='Sí' ? 'published' : (i.PUBLICADO==='Impreso' ? 'impreso' : (i.PUBLICADO==='Material Gráfico' ? 'material-grafico' : 'pending'));
                 let publicoText = i.PUBLICADO==='Sí' ? '✅ Sí' : (i.PUBLICADO==='Impreso' ? '🖨️ Impreso' : (i.PUBLICADO==='Material Gráfico' ? '🎨 Material Gráfico' : '❌ No'));
                 
+                // ===== SI ES "NO", PARPADEO INFINITO =====
+                let isNo = (i.PUBLICADO === 'No' || i.PUBLICADO === '' || !i.PUBLICADO);
+                let blinkClass = isNo ? 'blink-no' : '';
+                
                 let contenidoClass = (i.PUBLICADO !== 'Sí' && i.PUBLICADO !== 'Impreso' && i.PUBLICADO !== 'Material Gráfico') ? 'class="contenido-no-publicado"' : '';
                 
                 return `<tr>
@@ -931,7 +949,7 @@
                     <td>${i.ELABORADO_POR||'-'}</td>
                     <td><span class="badge editable ${i.PRIORIDAD==='Alta'?'alta':i.PRIORIDAD==='Media'?'media':i.PRIORIDAD==='Programar'?'programar':'baja'}" onclick="abrirModalPrioridad('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PRIORIDAD||'Media'}','${i.FECHA_PROGRAMACION||''}')">${i.PRIORIDAD||'Media'}</span></td>
                     <td><span class="badge editable pending" onclick="abrirModalEstado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.REVISION||'PENDIENTE'}')">${i.REVISION||'-'}</span></td>
-                    <td><span class="badge editable ${publicoClass}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${publicoText}</span></td>
+                    <td><span class="badge editable ${publicoClass} ${blinkClass}" onclick="abrirModalPublicado('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}','${i.PUBLICADO||'No'}')">${publicoText}</span></td>
                     <td><span class="badge">${i.PLATAFORMA||'-'}</span></td>
                     <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
                 </tr>`;
