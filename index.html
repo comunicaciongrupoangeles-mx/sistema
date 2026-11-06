@@ -6,6 +6,7 @@
     <title>GELA - Grupo Educativo Los Ángeles</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -59,7 +60,16 @@
         .metric-card:hover { transform: translateY(-5px); }
         .metric-card .value { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
         .metric-card .label { font-size: 0.85rem; opacity: 0.9; }
-        .metric-card .sub-stats { margin-top: 10px; font-size: 0.75rem; display: flex; justify-content: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px; }
+        
+        /* Se ajusta sub-stats para que se distribuya de forma ancha y proporcional */
+        .metric-card .sub-stats { 
+            margin-top: 15px; 
+            font-size: 0.75rem; 
+            display: flex; 
+            justify-content: space-around; 
+            border-top: 1px solid rgba(255,255,255,0.3); 
+            padding-top: 15px; 
+        }
         .metric-card .sub-stats span { display: inline-flex; align-items: center; gap: 5px; }
         
         .star-card {
@@ -146,6 +156,24 @@
             border-radius: 10px;
             white-space: nowrap;
         }
+
+        /* TARJETA PARA EL GRÁFICO DE AÑOS - DEGRADADO NARANJA */
+        .year-card {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            grid-column: span 2;
+        }
+        .year-card:hover { transform: translateY(-5px); }
+        .year-card h4 { font-size: 0.85rem; margin-bottom: 5px; opacity: 0.9; }
+        .year-card canvas { max-height: 160px; width: 100%; }
         
         .charts-grid {
             display: grid;
@@ -507,8 +535,8 @@
             .fab { width: 50px; height: 50px; font-size: 24px; }
             .input-with-copy { flex-direction: column; }
             .btn-copy-icon, .btn-open-link, .btn-copy-link { width: 100%; }
-            .today-posts-card { grid-column: span 1; }
-            .metric-card .sub-stats { flex-direction: column; gap: 5px; }
+            .today-posts-card, .year-card { grid-column: span 1; }
+            .metric-card .sub-stats { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
@@ -533,14 +561,18 @@
             <h2>⚡ Dashboard de Eficiencia</h2>
             <div class="dashboard-grid">
                 <div class="metric-card"><div class="value" id="tasaPublicacion">0%</div><div class="label">Tasa de Publicación</div></div>
-                <div class="metric-card">
+                
+                <!-- TARJETA CON DEGRADADO VERDE -->
+                <div class="metric-card" style="grid-column: span 2; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
                     <div class="value" id="totalPublicaciones">0</div>
                     <div class="label">Total de Publicaciones</div>
                     <div class="sub-stats" id="detallePublicaciones">
                         <span>✅ Publicadas/Impresas/Material: <strong id="pubPublicadas">0</strong></span>
                         <span>❌ No publicadas: <strong id="pubNoPublicadas">0</strong></span>
+                        <span>📊 Proporcional: <strong id="pubProporcional">0</strong></span>
                     </div>
                 </div>
+
                 <div class="metric-card"><div class="value" id="eficienciaEquipo">0%</div><div class="label">Eficiencia del Equipo</div></div>
                 <div class="metric-card"><div class="value" id="contenidosProgramados">0</div><div class="label">Contenidos Programados</div></div>
                 <div class="metric-card star-card">
@@ -548,10 +580,18 @@
                     <div class="label">🏆 Colaborador Estrella</div>
                     <div class="sub-value" id="estrellaContenidos">0 contenidos</div>
                 </div>
+                
+                <!-- PUBLICACIONES DEL DÍA DE HOY (MÁS ANCHO) -->
                 <div class="today-posts-card">
                     <div class="value" id="publicacionesHoy">0</div>
                     <div class="label">📅 Publicaciones del día de hoy</div>
                     <div class="today-posts-list" id="todayPostsList"><div style="text-align: center; opacity: 0.8;">Cargando...</div></div>
+                </div>
+                
+                <!-- GRÁFICO POR AÑO TIPO HISTOGRAMA (MÁS ANCHO Y DEGRADADO NARANJA) -->
+                <div class="year-card">
+                    <h4>📅 Publicaciones por Año</h4>
+                    <canvas id="chartAnioTotal"></canvas>
                 </div>
             </div>
             <div class="charts-grid">
@@ -560,7 +600,7 @@
                 <div class="chart-container"><h3>📊 Distribución prioridad</h3><canvas id="chartPrioridadDist"></canvas></div>
                 <div class="chart-container"><h3>✅ Estado de contenidos</h3><canvas id="chartEstadoDist"></canvas></div>
             </div>
-            <h3 style="margin-top:15px;">📋 Ranking de Responsables</h3>
+            <h3 style="margin-top:15px;">📋 Ranking de Responsables (Top 10)</h3>
             <div class="ranking-table">
                 <table style="width:100%">
                     <thead><tr><th>Responsable</th><th>Total</th><th>Publicados/Impresos/Material</th><th>Pendientes</th><th>Eficiencia</th></tr></thead>
@@ -599,7 +639,7 @@
         </div>
 
         <div class="card">
-            <h2>📋 Resultados (<span id="resultCount">0</span>)</h2>
+            <h2>📋 Resultados (<span id="resultCount">0</span>) <span style="font-size: 0.8rem; font-weight: normal; color: #666; margin-left: 10px;">(Mostrando últimos 10 días)</span></h2>
             <div class="results-table">
                 <table style="width:100%">
                     <thead>
@@ -637,6 +677,9 @@
         let allData = [];
         let charts = {};
         let estadoActualId = null, publicadoActualId = null, prioridadActualId = null;
+
+        // Registrar el plugin de datalabels globalmente
+        Chart.register(ChartDataLabels);
 
         const responsablesList = ["COMUNICACION", "MISS ANGELICA", "MISS AURORA", "MISS BERE", "MISS ELENA", "MISS JAZMIN", "MISS JAZMIN ORTIZ", "MISS JESYCA", "MISS LETY", "MISS LOLITA", "MISS LUCY", "MISS MALE", "MISS MAYTE", "MISS MONICA", "MISS NIDIA", "MISS OLGA", "MISS ROSARIO", "MISS SOL", "MISS SANDY", "PROF SANDRO", "MTRO. HUMBERTO", "PROF. FERNANDO", "PROF. JESUS", "PROF. JOEL", "PROF. MIGUEL", "PROF. SAMUEL"];
 
@@ -783,6 +826,77 @@
             document.getElementById('todayPostsList').innerHTML=pubs.length? pubs.map(i=>`<div class="today-post-item"><span class="today-post-title">📄 ${i.CONTENIDO_CORTO||'Sin título'}</span><span class="today-post-responsable">👤 ${i.RESPONSABLE||'N/A'}</span></div>`).join(''):'<div style="text-align:center;opacity:0.8;">📭 No hay publicaciones para hoy</div>'; 
         }
         
+        function actualizarPublicacionesProporcional() {
+            let total = allData.length;
+            let hoy = getToday();
+            let pubsHoy = allData.filter(i => obtenerFechaYYYYMMDD(i.FECHA_PROG) === hoy).length;
+            let porcentaje = total > 0 ? ((pubsHoy / total) * 100).toFixed(1) : 0;
+            document.getElementById('pubProporcional').innerHTML = `${pubsHoy} (${porcentaje}%)`;
+        }
+
+        function actualizarGraficoAnio() {
+            let conteoAnios = {};
+            allData.forEach(r => {
+                let fp = obtenerFechaYYYYMMDD(r.FECHA_PROG);
+                if(fp) {
+                    let anio = fp.split('-')[0];
+                    conteoAnios[anio] = (conteoAnios[anio] || 0) + 1;
+                }
+            });
+            
+            let labels = Object.keys(conteoAnios).sort();
+            let data = labels.map(l => conteoAnios[l]);
+
+            if(charts.anioTotal) charts.anioTotal.destroy();
+            charts.anioTotal = new Chart(document.getElementById('chartAnioTotal'), {
+                type: 'bar', // HISTOGRAMA (BARRAS)
+                data: {
+                    labels: labels.length ? labels : ['Sin datos'],
+                    datasets: [{
+                        label: 'Publicaciones',
+                        data: data.length ? data : [0],
+                        backgroundColor: '#ffebd6', // Color de barra naranja claro para contrastar con el fondo
+                        borderRadius: 8,
+                        barThickness: 35 // Hace las barras más gruesas
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 20, bottom: 0 }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            color: '#333', // Texto oscuro para que se lea sobre la barra clara
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            rotation: -90, // ROTACIÓN VERTICAL
+                            anchor: 'center',
+                            align: 'center',
+                            formatter: function(value) {
+                                return value > 0 ? value : ''; // Ocultar el 0 si no hay datos
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { display: false },
+                            ticks: { display: false } // Ocultar números del eje Y
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'white', font: { weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+        
         function actualizarColaboradorEstrella(){ 
             let stats={}; 
             allData.forEach(i=>{ let e=i.ELABORADO_POR; if(e) stats[e]=(stats[e]||0)+1; }); 
@@ -818,13 +932,41 @@
                 } 
             }); 
             if(charts.mensual) charts.mensual.destroy(); 
-            charts.mensual=new Chart(document.getElementById('chartMensual'),{type:'bar',data:{labels:meses,datasets:[{label:'Publicaciones',data:mensual,backgroundColor:'#1e3c72'}]}}); 
+            charts.mensual=new Chart(document.getElementById('chartMensual'),{
+                type:'bar',
+                data:{
+                    labels:meses,
+                    datasets:[{
+                        label:'Publicaciones',
+                        data:mensual,
+                        backgroundColor:'#1e3c72', 
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    plugins: {
+                        datalabels: {
+                            color: '#fff', // Texto blanco
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            rotation: -90, // ROTACIÓN VERTICAL
+                            anchor: 'center',
+                            align: 'center',
+                            formatter: function(value) {
+                                return value > 0 ? value : ''; // Ocultar el 0 si no hay datos
+                            }
+                        }
+                    }
+                }
+            }); 
             
             let respCount={}; 
             allData.forEach(r=>{ if(r.RESPONSABLE) respCount[r.RESPONSABLE]=(respCount[r.RESPONSABLE]||0)+1; }); 
             let topResp=Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,5); 
             if(charts.ranking) charts.ranking.destroy(); 
-            charts.ranking=new Chart(document.getElementById('chartRanking'),{type:'bar',data:{labels:topResp.map(r=>r[0]),datasets:[{label:'Contenidos',data:topResp.map(r=>r[1]),backgroundColor:'#2a5298'}]}}); 
+            charts.ranking=new Chart(document.getElementById('chartRanking'),{type:'bar',data:{labels:topResp.map(r=>r[0]),datasets:[{label:'Contenidos',data:topResp.map(r=>r[1]),backgroundColor:'#2a5298', borderRadius: 10}]}}); 
             
             let prioridad={Alta:0,Media:0,Baja:0,Programar:0}; 
             allData.forEach(r=>{ if(r.PRIORIDAD) prioridad[r.PRIORIDAD]++; }); 
@@ -846,7 +988,7 @@
                 if(r.PUBLICADO==='Sí' || r.PUBLICADO==='Impreso' || r.PUBLICADO==='Material Gráfico') stats[r.RESPONSABLE].publicados++; 
                 else stats[r.RESPONSABLE].pendientes++; 
             }); 
-            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total - a.total);
+            let ranking=Object.entries(stats).map(([n,s])=>({nombre:n,total:s.total,publicados:s.publicados,pendientes:s.pendientes,eficiencia:s.total?((s.publicados/s.total)*100).toFixed(1):0})).sort((a,b)=>b.total - a.total).slice(0, 10);
             document.getElementById('rankingTableBody').innerHTML=ranking.length? ranking.map(r=>`<tr><td>${r.nombre}</td><td><strong>${r.total}</strong></td><td>${r.publicados}</td><td>${r.pendientes}</td><td><span class="badge ${r.eficiencia>=70?'published':'pending'}">${r.eficiencia}%</span></td></tr>`).join(''):'<tr><td colspan="5">Sin datos</td></tr>'; 
         }
         
@@ -861,6 +1003,8 @@
             actualizarGraficos(); 
             actualizarRanking(); 
             actualizarRankingElaboradoPor(); 
+            actualizarPublicacionesProporcional();
+            actualizarGraficoAnio();
         }
         
         function parsearFechaRegistro(fechaStr) {
@@ -924,6 +1068,21 @@
                 let fb = parsearFechaRegistro(b.FECHA_REGISTRO);
                 return fb - fa;
             });
+
+            // ===== NUEVO FILTRO: MOSTRAR SOLO ÚLTIMOS 10 DÍAS =====
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const hace10Dias = new Date(hoy);
+            hace10Dias.setDate(hoy.getDate() - 10);
+
+            filtrados = filtrados.filter(i => {
+                let fechaParaFiltro = i.FECHA_PROGRAMACION || i.FECHA_PROG;
+                if (!fechaParaFiltro) return false;
+                let f = new Date(fechaParaFiltro);
+                f.setHours(0, 0, 0, 0);
+                return f >= hace10Dias && f <= hoy;
+            });
+            // ========================================================
             
             document.getElementById('resultCount').innerHTML=filtrados.length; 
             document.getElementById('resultsTableBody').innerHTML=filtrados.length? filtrados.map(i=>{
@@ -953,7 +1112,7 @@
                     <td><span class="badge">${i.PLATAFORMA||'-'}</span></td>
                     <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
                 </tr>`;
-            }).join(''):'<tr><td colspan="11">📭 Sin resultados</td></tr>'; 
+            }).join(''):'<tr><td colspan="11">📭 Sin resultados en los últimos 10 días</td></tr>'; 
         }
         
         function limpiarFiltros(){ 
@@ -1199,6 +1358,13 @@
             }; 
             await guardarDatos(fd,!!editId); 
         });
+
+        // ===== FILTROS AUTOMÁTICOS: aplicar al cambiar cualquier filtro =====
+        ['filterFechaDia','filterMes','filterNivel','filterResponsable','filterElaboradoPor','filterPrioridad','filterEstado','filterPublicado','filterPlataforma'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', aplicarFiltros);
+        });
+        // ===================================================================
         
         llenarSelectResponsables();
         loadData();
