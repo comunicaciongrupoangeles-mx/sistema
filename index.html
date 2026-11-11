@@ -639,7 +639,7 @@
         </div>
 
         <div class="card">
-            <h2>📋 Resultados (<span id="resultCount">0</span>) <span style="font-size: 0.8rem; font-weight: normal; color: #666; margin-left: 10px;">(Mostrando últimos 10 días)</span></h2>
+            <h2>📋 Resultados (<span id="resultCount">0</span>) <span id="resultModeLabel" style="font-size: 0.8rem; font-weight: normal; color: #666; margin-left: 10px;">(Mostrando último mes)</span></h2>
             <div class="results-table">
                 <table style="width:100%">
                     <thead>
@@ -1069,19 +1069,32 @@
                 return fb - fa;
             });
 
-            // ===== NUEVO FILTRO: MOSTRAR SOLO ÚLTIMOS 10 DÍAS =====
-            const hoy = new Date();
-            hoy.setHours(0, 0, 0, 0);
-            const hace10Dias = new Date(hoy);
-            hace10Dias.setDate(hoy.getDate() - 10);
+            // ===== FILTRO VISUAL DE ÚLTIMO MES =====
+            // Si NO hay filtros de fecha/mes activos, se muestran solo los resultados del último mes.
+            // Si el usuario busca una fecha específica (día o mes), se muestran esos resultados sin restricción.
+            const fechaDiaVal = document.getElementById('filterFechaDia').value;
+            const mesVal = document.getElementById('filterMes').value;
+            const hayFiltroFecha = fechaDiaVal || mesVal;
 
-            filtrados = filtrados.filter(i => {
-                let fechaParaFiltro = i.FECHA_PROGRAMACION || i.FECHA_PROG;
-                if (!fechaParaFiltro) return false;
-                let f = new Date(fechaParaFiltro);
-                f.setHours(0, 0, 0, 0);
-                return f >= hace10Dias && f <= hoy;
-            });
+            if (!hayFiltroFecha) {
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const haceUnMes = new Date(hoy);
+                haceUnMes.setMonth(hoy.getMonth() - 1);
+                haceUnMes.setHours(0, 0, 0, 0);
+
+                filtrados = filtrados.filter(i => {
+                    let fechaParaFiltro = i.FECHA_PROGRAMACION || i.FECHA_PROG;
+                    if (!fechaParaFiltro) return false;
+                    let f = new Date(fechaParaFiltro);
+                    if (isNaN(f)) return false;
+                    f.setHours(0, 0, 0, 0);
+                    return f >= haceUnMes && f <= hoy;
+                });
+                document.getElementById('resultModeLabel').innerHTML = '(Mostrando último mes)';
+            } else {
+                document.getElementById('resultModeLabel').innerHTML = '(Mostrando búsqueda por fecha)';
+            }
             // ========================================================
             
             document.getElementById('resultCount').innerHTML=filtrados.length; 
@@ -1112,7 +1125,7 @@
                     <td><span class="badge">${i.PLATAFORMA||'-'}</span></td>
                     <td><div class="action-buttons"><button class="btn-edit" onclick='abrirModal(${JSON.stringify(i).replace(/'/g,"&#39;")})'>✏️ Editar</button><button class="btn-delete" onclick="eliminarContenido('${i.ID_UNICO}','${(i.CONTENIDO_CORTO||'').replace(/'/g,"\\'")}')">🗑️ Eliminar</button></div></td>
                 </tr>`;
-            }).join(''):'<tr><td colspan="11">📭 Sin resultados en los últimos 10 días</td></tr>'; 
+            }).join(''):'<tr><td colspan="11">📭 Sin resultados en el último mes</td></tr>'; 
         }
         
         function limpiarFiltros(){ 
